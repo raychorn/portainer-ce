@@ -1,0 +1,20 @@
+version: "3.8"
+services:
+    portainer:
+        image: portainer/portainer-ce
+        container_name: portainer-ce
+        volumes:
+            - portainer_data:/data portainer/portainer-ce
+            - /var/run/docker.sock:/var/run/docker.sock
+        ports:
+            - 8000:8000
+            - 9000:9000
+        deploy:
+            resources:
+                limits:
+                    cpus: 2.0
+                    memory: 2048M
+                reservations:
+                    cpus: 1.0
+                    memory: 512M
+        restart: unless-stopped
