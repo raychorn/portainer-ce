@@ -1,19 +1,5 @@
 #!/bin/bash
 
-container="portainer-ce" 
+# https://gist.github.com/raychorn/1075e0a4e73c7fb3aaa9400e23805522
 
-if ! [ -d ./home ]
-then
-    mkdir ./home
-fi
-
-docker-compose up -d
-
-CID=$(docker ps -qf "name=$container")
-echo "CID=$CID"
-if [[ ! $CID. == . ]]
-then
-    echo "$container is running"
-else
-    echo "$container is not running"
-fi
+docker run -d -p 3040:9000 --name portainer --restart=always -v portainer_data:/data portainer/portainer-ce -H tcp://host.docker.internal:2375
