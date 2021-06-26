@@ -1,0 +1,29 @@
+version: "3.9"
+services:
+    mongodb:
+        image: mongo:latest
+        container_name: mongodb
+        hostname: mongodb
+        volumes:
+            - ./etc/mongod.conf:/etc/mongod.conf
+            - /mnt/e/data/mongodb/:/data/db/
+            - /opt/mongodb/mongodb/data/log/:/var/log/mongodb/
+        env_file:
+            - .env
+        #environment:
+        #    MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+        #    MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+        #    MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
+        ports:
+            - "27777:27017"
+        logging:
+            options:
+                max-size: 1g
+        command: ["--noauth", "-f", "/etc/mongod.conf"]
+        restart: unless-stopped
+        deploy:
+            resources:
+                limits:
+                    cpus: '1.0'
+                    memory: 512M
+
