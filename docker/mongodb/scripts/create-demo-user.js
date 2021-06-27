@@ -2,7 +2,7 @@ use demo
 db.CreateUser(
    {
       user: "demo",
-      pwd: "demo12345",
+      pwd: passwordPrompt(),
       roles:[
          {
             role:"readwrite",

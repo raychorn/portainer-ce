@@ -7,7 +7,8 @@ then
     echo "COMMAND can be one of the following:"
     echo "    logs ... show logs"
     echo "    mounts ... show mounts"
-    echo "    shell ... show shell"
+    echo "    shell ... enter shell"
+    echo "    restart ... restart"
     exit
 fi
 
@@ -68,5 +69,9 @@ then
     if [ "$COMMAND" == "shell" ]; then
         echo "Shell for $CID"
         docker exec -it $CID bash
+    fi
+    if [ "$COMMAND" == "restart" ]; then
+        echo "Restart for $CID"
+        docker restart $CID
     fi
 fi

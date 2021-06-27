@@ -1,0 +1,22 @@
+version: "3.9"
+services:
+    mongoclient:
+        image: mongoclient/mongoclient:latest
+        container_name: mongoclient
+        hostname: mongoclient
+        volumes:
+            - /opt/mongoclient:/data/db/
+        env_file:
+            - .env
+        ports:
+            - "3000:3000"
+        logging:
+            options:
+                max-size: 1g
+        restart: unless-stopped
+        deploy:
+            resources:
+                limits:
+                    cpus: '1.0'
+                    memory: 512M
+

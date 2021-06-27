@@ -14,6 +14,14 @@ then
 fi
 sudo touch $mongodb_root/data/log/mongod.log
 sudo cp ./etc/mongod.conf $mongodb_root//etc/mongod.conf
+
+mongodb_data=$mongodb_root/data/db/
+if [[ ! -d $mongodb_data ]]
+then
+    echo "Created $mongodb_data"
+    sudo mkdir -p $mongodb_data
+fi
+
 sudo chown -R root:root $mongodb_root
 sudo chmod -R 0777 $mongodb_root
 
