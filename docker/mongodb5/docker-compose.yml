@@ -1,17 +1,17 @@
 version: "3.9"
 services:
-    mongodb:
-        image: mongo:latest
-        container_name: mongodb
-        hostname: mongodb
+    mongodb5:
+        image: mongo:5.0.0
+        container_name: mongodb5
+        hostname: mongodb5
         volumes:
             - ./etc/mongod.conf:/etc/mongod.conf
-            - /opt/mongodb/data/:/data/db/
-            - /opt/mongodb/mongodb/data/log/:/var/log/mongodb/
+            - /opt/mongodb5/data/:/data/db/
+            - /opt/mongodb5/mongodb/data/log/:/var/log/mongodb/
         env_file:
             - .env
         ports:
-            - "27017:27017"
+            - "27117:27017"
         logging:
             options:
                 max-size: 1g
@@ -20,6 +20,6 @@ services:
         deploy:
             resources:
                 limits:
-                    cpus: '1.0'
-                    memory: 512M
+                    cpus: '6.0'
+                    memory: 1512M
 
