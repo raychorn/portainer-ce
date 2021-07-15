@@ -1,0 +1,16 @@
+version: '3.9'
+services:
+  nginx_proxy: 
+    image: nginx:latest
+    container_name: nginx_proxy
+    volumes:
+      - ./nginx:/etc/nginx
+      - ./nginx-content:/usr/share/nginx
+    ports:
+      - 80:80
+      - 443:443
+    deploy:
+      resources:
+          limits:
+              cpus: '6.0'
+              memory: 512M
