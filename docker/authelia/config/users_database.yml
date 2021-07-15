@@ -1,0 +1,18 @@
+---
+###############################################################
+#                         Users Database                      #
+###############################################################
+
+# This file can be used if you do not have an LDAP set up.
+
+# List of users
+users:
+  username:
+    displayname: "raychorn"
+    # Password is Authelia
+    password: "$argon2id$v=19$m=65536,t=1,p=8$R1dIdjFtY0k0Tk5HMWUxRA$bNqdhEpWM21Kj3tDHY04xC2W9dsvg/62NZtAoeRTZOU" 
+    email: raychorn@gmail.com
+    groups:
+      - admins
+      - dev
+...
