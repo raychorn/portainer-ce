@@ -1,0 +1,24 @@
+version: '3.9'
+
+services:
+  registry:
+    image: registry:2
+    container_name: docker_hub
+    restart: always
+    ports:
+      - 5000:5000
+    #environment:
+    #  REGISTRY_HTTP_TLS_CERTIFICATE: /certs/certificate.crt
+    #  REGISTRY_HTTP_TLS_KEY: /certs/private.key
+    #  REGISTRY_AUTH: htpasswd
+    #  REGISTRY_AUTH_HTPASSWD_PATH: /auth/.htpasswd
+    #  REGISTRY_AUTH_HTPASSWD_REALM: 10.0.0.173
+    volumes:
+      - /opt/docker_registry:/var/lib/registry
+      #- ./certs:/certs
+      #- /opt/docker_registry/auth:/auth
+    deploy:
+      resources:
+        limits:
+          cpus: '6.0'
+          memory: 512M
