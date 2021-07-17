@@ -4,12 +4,20 @@ services:
     image: nginx:latest
     container_name: nginx_proxy
     volumes:
+      - ./entrypoint.sh:/docker-entrypoint.sh
       - ./nginx:/etc/nginx
       - ./nginx-content:/usr/share/nginx
+      - ./.env:/.env
     ports:
       - 80:80
       - 443:443
+    #network_mode: host
+    extra_hosts:
+      - "dockerhost:${EXTERNAL_HOST}"
     restart: unless-stopped
+    #environment:
+    #  - EXTERNAL_HOST:${EXTERNAL_HOST}
+    command: ["/docker-entrypoint.sh"]
     deploy:
       resources:
           limits:

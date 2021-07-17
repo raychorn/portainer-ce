@@ -6,8 +6,6 @@ services:
     container_name: authelia
     volumes:
       - ./config:/config
-    networks:
-      - net
     #labels:
     #  - 'traefik.enable=true'
     #  - 'traefik.http.routers.authelia.rule=Host(`auth.local.example.com`)'
@@ -16,8 +14,9 @@ services:
     #  - 'traefik.http.middlewares.authelia.forwardauth.address=http://authelia:9091/api/verify?rd=https://auth.local.example.com'
     #  - 'traefik.http.middlewares.authelia.forwardauth.trustForwardHeader=true'
     #  - 'traefik.http.middlewares.authelia.forwardauth.authResponseHeaders=Remote-User,Remote-Groups,Remote-Name,Remote-Email'
-    expose:
-      - 9091
+    ports:
+      - 9091:9091
+    #network_mode: host
     restart: unless-stopped
     environment:
       - TZ=America/Denver
@@ -28,6 +27,3 @@ services:
             limits:
                 cpus: '6.0'
                 memory: 512M
-networks:
-  net:
-    driver: bridge
