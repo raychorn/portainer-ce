@@ -12,8 +12,8 @@ services:
       - 80:80
       - 443:443
     #network_mode: host
-    extra_hosts:
-      - "dockerhost:${EXTERNAL_HOST}"
+    #extra_hosts:
+    #  - "dockerhost:${EXTERNAL_HOST}"
     restart: unless-stopped
     #environment:
     #  - EXTERNAL_HOST:${EXTERNAL_HOST}
