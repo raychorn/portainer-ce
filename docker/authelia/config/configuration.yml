@@ -9,7 +9,7 @@ log_level: debug
 theme: dark
 # This secret can also be set using the env variables AUTHELIA_JWT_SECRET_FILE
 jwt_secret: a_very_important_secret
-default_redirection_url: https://auth.local.example.com
+default_redirection_url: https://auth.web-service.org
 totp:
   issuer: authelia.com
 
@@ -33,11 +33,11 @@ access_control:
   default_policy: deny
   rules:
     # Rules applied to everyone
-    - domain: public.example.com
+    - domain: www.web-service.org
       policy: bypass
-    - domain: heimdall.local.example.com
+    - domain: heimdall.web-service.org
       policy: one_factor
-    - domain: pve1.local.example.com
+    - domain: pve1.web-service.org
       policy: two_factor
 
 session:
