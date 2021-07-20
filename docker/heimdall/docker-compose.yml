@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  heimdall:
+    image: ghcr.io/linuxserver/heimdall
+    container_name: heimdall
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Denver
+    volumes:
+      - ./config:/config
+    ports:
+      - 8090:80
+      - 4439:443
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 256M
+    restart: unless-stopped
