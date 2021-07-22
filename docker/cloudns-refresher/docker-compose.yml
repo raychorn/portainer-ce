@@ -10,12 +10,14 @@ services:
           - ./requirements.txt:/workspaces/requirements.txt
       entrypoint:
           - /bin/bash
+      ports:
+       - "9999:9000"
       tty: true
       stdin_open: true
       command: ["/workspaces/makevenv.sh"]
       logging:
           options:
-              max-size: 1g        
+              max-size: 1g
       deploy:
           resources:
               limits:
