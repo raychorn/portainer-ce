@@ -10,12 +10,13 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./portainer_data:/data
+      - portainer_data:/data
     ports:
-      - 3041:9000
+      - 8000:8000
+      - 9000:9000
     deploy:
         resources:
             limits:
                 cpus: '1.0'
                 memory: 512M
-  
+    restart: always
