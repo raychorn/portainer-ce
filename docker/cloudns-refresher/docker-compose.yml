@@ -23,3 +23,6 @@ services:
               limits:
                   cpus: '1.0'
                   memory: 256M
+          replicas: 2
+          placement:
+               max_replicas_per_node: 1
