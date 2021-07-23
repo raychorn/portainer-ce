@@ -15,6 +15,8 @@ apt-get update -y
 apt-get upgrade -y
 echo "2" | apt-get install openssh-server -y
 
+apt-get install wakeonlan -y
+
 ETC_SSH=/workspaces/etc-ssh
 
 if [[ -d $ETC_SSH ]]
@@ -44,7 +46,8 @@ fi
 service ssh restart
 
 while true; do
-  echo "Sleeping... this is what this is supposed to do but this keesp the container running forever."
-  sleep 1000
+  echo "Sleeping... this is what this is supposed to do but this keesp the container running forever and it is doing wakeonlan's."
+  wakeonlan d4:5d:df:1e:10:aa
+  sleep 60s
 done
 exit
