@@ -14,6 +14,9 @@ services:
       - 2222:2222
     tty: true
     stdin_open: true
+    extra_hosts: 
+      - "10.0.0.173:10.0.0.173"
+      - "docker.host:${EXTERNAL_HOST}"
     command: ["/workspaces/entrypoint.sh"]
     logging:
         options:
@@ -22,5 +25,5 @@ services:
       resources:
         limits:
           cpus: '1.0'
-          memory: 128M
+          memory: 256M
     restart: unless-stopped

@@ -14,6 +14,8 @@ echo "pip3=$pip3"
 apt-get update -y
 apt-get upgrade -y
 echo "2" | apt-get install openssh-server -y
+apt-get install net-tools -y
+apt install iputils-ping -y
 
 apt-get install wakeonlan -y
 
