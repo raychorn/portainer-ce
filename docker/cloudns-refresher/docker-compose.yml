@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   python_runner2:
-      image: 10.0.0.173:5000/ubuntu_focal_all_pythons:latest-3.9.6
+      image: raychorn/ubuntu_focal_all_pythons:latest-3.9.6
       restart: unless-stopped
       volumes:
           - ./code:/workspaces/python_runner/
@@ -23,6 +23,3 @@ services:
               limits:
                   cpus: '1.0'
                   memory: 256M
-          replicas: 2
-          placement:
-               max_replicas_per_node: 1

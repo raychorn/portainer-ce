@@ -5,4 +5,4 @@ EXTERNAL_HOST=$(ifconfig | grep -E "([0-9]{1,3}\.){3}[0-9]{1,3}" | grep -v 127.0
 $(which python3.9) ./scripts/set_external_hosts.py $(pwd) $EXTERNAL_HOST
 
 #docker-compose up -d
-docker stack deploy -c docker-compose.yml cloudns-refresher
+docker stack deploy -c docker-compose-stack.yml cloudns-refresher
