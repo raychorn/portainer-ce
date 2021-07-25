@@ -4,3 +4,4 @@ docker/pi-hole/etc-pihole/pihole-FTL.db
 docker/heimdall/config/log/*
 docker/heimdall/config/www/app.sqlite
 docker/pi-hole/etc-pihole/gravity.db
+docker/portainer_ce/.env
