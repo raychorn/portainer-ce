@@ -1,0 +1,3 @@
+# m h  dom mon dow   command
+0 0-23 * * * docker system prune -a -f
+0 0-23 * * * docker system prune --volumes -f
