@@ -1,0 +1,30 @@
+version: "3.8"
+
+services:
+  webdav:
+    image: bytemark/webdav
+    restart: always
+    env_file: 
+        - ./.env
+    ports:
+      - "${PORT}:80"
+      - "${PORT2}:443"
+    environment:
+      AUTH_TYPE: Digest
+      USERNAME: ${USERNAME}
+      PASSWORD: ${PASSWORD}
+    volumes:
+      - webdav_volume:/var/lib/dav
+    logging:
+        options:
+            max-size: 1g
+    deploy:
+        resources:
+            limits:
+                cpus: '1.0'
+                memory: 512M
+
+volumes:
+    webdav_volume:
+        external: true
+        name: ${VOLUME}

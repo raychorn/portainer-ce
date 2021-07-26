@@ -1,4 +1,5 @@
 #!/bin/bash
+
 BASEDIR=$(dirname $0)
 SOURCE="${BASH_SOURCE[0]}"
 PWD=$(pwd)
@@ -48,28 +49,24 @@ findPortInRange() {
 
 export $(cat $BASEDIR/.env | sed 's/#.*//g' | xargs)
 
-if [ -f $BASEDIR/PORT8000.env ]; then
-    echo "Loading environment variables from $BASEDIR/PORT8000.env"
-    export $(cat $BASEDIR/PORT8000.env | sed 's/#.*//g' | xargs)
+if [ -f $BASEDIR/PORTS.env ]; then
+    echo "Loading environment variables from $BASEDIR/PORTS.env"
+    export $(cat $BASEDIR/PORTS.env | sed 's/#.*//g' | xargs)
 else
-    P8000=8000
+    PORT=8088
 fi
 
-if [ -f $BASEDIR/PORT9000.env ]; then
-    echo "Loading environment variables from $BASEDIR/PORT9000.env"
-    export $(cat $BASEDIR/PORT9000.env | sed 's/#.*//g' | xargs)
-else
-    P9000=9000
-fi
+PORT=$(findPortInRange 8088 8999 $PORT)
+PORT2=$PORT
+((PORT2++))
+PORT2=$(findPortInRange 8088 8999 $PORT2)
 
-P8000=$(findPortInRange 8000 8999 $P8000)
-echo "P8000 -> $P8000"
-echo "P8000=$P8000" > $BASEDIR/PORT8000.env
-export P8000
+echo "PORT -> $PORT"
+echo "PORT2 -> $PORT2"
 
-P9000=$(findPortInRange 9000 9999 $P9000)
-echo "P9000 -> $P9000"
-echo "P9000=$P9000" > $BASEDIR/PORT9000.env
-export P9000
+echo "PORT=$PORT" > $BASEDIR/PORTS.env
+echo "PORT2=$PORT2" >> $BASEDIR/PORTS.env
 
-docker stack deploy -c portainer-agent-stack.yml portainer
+export $(cat $BASEDIR/PORTS.env | sed 's/#.*//g' | xargs)
+
+docker-compose up -d
