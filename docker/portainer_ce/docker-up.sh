@@ -22,9 +22,9 @@ fi
 
 # docker swarm init --advertise-addr $(hostname -I | awk '{ print $1 }'):2377
 
-#docker-compose -H tcp://$EXTERNAL_HOST:2375 up -d
+docker-compose -H tcp://$EXTERNAL_HOST:2375 up -d
 
-docker-compose -H tcp://host.docker.internal:2375 up -d
+#docker-compose -H tcp://host.docker.internal:2375 up -d
 #docker stack deploy -c portainer-agent-stack.yml portainer
 
 #docker-compose up -d
