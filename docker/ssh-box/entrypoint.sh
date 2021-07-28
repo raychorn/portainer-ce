@@ -49,7 +49,9 @@ service ssh restart
 
 while true; do
   echo "Sleeping... this is what this is supposed to do but this keesp the container running forever and it is doing wakeonlan's."
-  wakeonlan d4:5d:df:1e:10:aa
+  wakeonlan 7e:d3:9b:af:f3:59
+  wakeonlan a8:a1:59:60:bd:3e
+  wakeonlan 00:68:eb:ad:0d:3a
   sleep 60s
 done
 exit
