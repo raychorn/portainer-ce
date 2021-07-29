@@ -6,3 +6,4 @@ docker/heimdall/config/www/app.sqlite
 docker/pi-hole/etc-pihole/gravity.db
 docker/portainer_ce/.env
 docker/webdav/.env
+docker/pi-hole/etc-pihole/pihole-FTL.db
