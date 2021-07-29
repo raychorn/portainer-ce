@@ -12,8 +12,8 @@ services:
       - '4438:443/tcp'
     environment:
       TZ: 'America/Denver'
-      DNS1: 1.1.1.1
-      DNS2: 8.8.8.8
+      DNS1: 8.8.8.8
+      DNS2: 1.1.1.1
     # Volumes store your data between container upgrades
     volumes:
        - './etc-pihole/:/etc/pihole/'
@@ -22,7 +22,7 @@ services:
       resources:
         limits:
           cpus: '1.0'
-          memory: 128M
+          memory: 256M
     dns:
       - 127.0.0.1
       - 1.1.1.1
