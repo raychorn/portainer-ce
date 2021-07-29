@@ -1,13 +1,9 @@
 version: "3.9"
 services:
     mongodb5:
-        image: mongo:5.0.0
+        image: mongo:latest
         container_name: mongodb5
         hostname: mongodb5
-        volumes:
-            - ./etc/mongod.conf:/etc/mongod.conf
-            - /opt/mongodb5/data/:/data/db/
-            - /opt/mongodb5/mongodb/data/log/:/var/log/mongodb/
         env_file:
             - .env
         ports:
@@ -15,11 +11,21 @@ services:
         logging:
             options:
                 max-size: 1g
-        command: ["-f", "/etc/mongod.conf"]
+        volumes:
+            - type: volume
+              source: mongoconf1
+              target: /etc
+            - type: volume
+              source: mongodata1
+              target: /data/db
+        command: ["-f", "/etc/mongodb.conf"]
         restart: unless-stopped
         deploy:
+            mode: replicated
+            replicas: 1
+            placement:
+              constraints: [node.labels.mongo.replica == 1]
             resources:
                 limits:
                     cpus: '6.0'
                     memory: 1512M
-

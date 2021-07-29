@@ -2,38 +2,22 @@
 
 # https://dev.to/efe136/how-to-enable-mongodb-authentication-with-docker-compose-2nbp
 
-cname="mongodb5" 
+cname="mongo1" 
 
-mongodb_root=/opt/mongodb5
+#mongod --clusterAuthMode x509 --sslMode requireSSL --sslPEMKeyFile "/home/raychorn/__projects/portainer-ce/docker/mongodb5/mongocerts/user.pem" --sslCAFile "/home/raychorn/__projects/portainer-ce/docker/mongodb5/mongocerts/my.crt"
 
-mongodb_data_log=$mongodb_root/data/log/
-if [[ ! -d $mongodb_data_log ]]
-then
-    echo "Created $mongodb_data_log"
-    sudo mkdir -p $mongodb_data_log
-fi
-sudo touch $mongodb_root/data/log/mongod.log
-sudo cp ./etc/mongod.conf $mongodb_root//etc/mongod.conf
+#docker service create --limit-cpu "6.0" --limit-memory "1g" --dns "10.0.0.196" --reserve-cpu "6.0" --reserve-memory "1512m" --replicas 1 --network host --mount type=volume,source=mongodata1,target=/data/db --mount type=volume,source=mongoconf1,target=/etc/mongod.conf  --mount type=volume,source=mongoconfigdb1,target=/data/configdb --constraint 'node.labels.mongo.replica == 1' --name mongo1 mongo:5.0.1-focal --replSet "rs0" --clusterAuthMode x509 --sslMode requireSSL --sslPEMKeyFile "/home/raychorn/__projects/portainer-ce/docker/mongodb5/mongocerts/user.pem" --sslCAFile "/home/raychorn/__projects/portainer-ce/docker/mongodb5/mongocerts/my.crt"
+#docker service create --limit-cpu "6.0" --limit-memory "1g" --dns "10.0.0.196" --reserve-cpu "6.0" --reserve-memory "1512m" --replicas 1 --network host --mount type=volume,source=mongodata2,target=/data/db --mount type=volume,source=mongoconf2,target=/etc/mongod.conf  --mount type=volume,source=mongoconfigdb2,target=/data/configdb --constraint 'node.labels.mongo.replica == 2' --name mongo2 mongo:5.0.1-focal --replSet "rs0" --clusterAuthMode x509 --sslMode requireSSL --sslPEMKeyFile "/home/raychorn/__projects/portainer-ce/docker/mongodb5/mongocerts/user.pem" --sslCAFile "/home/raychorn/__projects/portainer-ce/docker/mongodb5/mongocerts/my.crt"
+#docker service create --limit-cpu "6.0" --limit-memory "1g" --dns "10.0.0.196" --reserve-cpu "6.0" --reserve-memory "1512m" --replicas 1 --network host --mount type=volume,source=mongodata3,target=/data/db --mount type=volume,source=mongoconf3,target=/etc/mongod.conf  --mount type=volume,source=mongoconfigdb3,target=/data/configdb --constraint 'node.labels.mongo.replica == 3' --name mongo3 mongo:5.0.1-focal --replSet "rs0" --clusterAuthMode x509 --sslMode requireSSL --sslPEMKeyFile "/home/raychorn/__projects/portainer-ce/docker/mongodb5/mongocerts/user.pem" --sslCAFile "/home/raychorn/__projects/portainer-ce/docker/mongodb5/mongocerts/my.crt"
 
-mongodb_data=$mongodb_root/data/db/
-if [[ ! -d $mongodb_data ]]
-then
-    echo "Created $mongodb_data"
-    sudo mkdir -p $mongodb_data
-fi
+#docker service create --limit-cpu "6.0" --limit-memory "1g" --dns "10.0.0.196" --reserve-cpu "6.0" --reserve-memory "1512m" --replicas 1 --network host --mount type=volume,source=mongodata1,target=/data/db --mount type=volume,source=mongoconf1,target=/etc/mongod.conf  --mount type=volume,source=mongoconfigdb1,target=/data/configdb --constraint 'node.labels.mongo.replica == 1' --name mongo1 mongo:5.0.1-focal --replSet "rs0" --clusterAuthMode x509 --sslMode requireSSL --sslPEMKeyFile "/srv/mongocerts/user.pem" --sslCAFile "/srv/mongocerts/my.crt"
+#docker service create --limit-cpu "6.0" --limit-memory "1g" --dns "10.0.0.196" --reserve-cpu "6.0" --reserve-memory "1512m" --replicas 1 --network host --mount type=volume,source=mongodata2,target=/data/db --mount type=volume,source=mongoconf2,target=/etc/mongod.conf  --mount type=volume,source=mongoconfigdb2,target=/data/configdb --constraint 'node.labels.mongo.replica == 2' --name mongo2 mongo:5.0.1-focal --replSet "rs0" --clusterAuthMode x509 --sslMode requireSSL --sslPEMKeyFile "/srv/mongocerts/user.pem" --sslCAFile "/srv/mongocerts/my.crt"
+#docker service create --limit-cpu "6.0" --limit-memory "1g" --dns "10.0.0.196" --reserve-cpu "6.0" --reserve-memory "1512m" --replicas 1 --network host --mount type=volume,source=mongodata3,target=/data/db --mount type=volume,source=mongoconf3,target=/etc/mongod.conf  --mount type=volume,source=mongoconfigdb3,target=/data/configdb --constraint 'node.labels.mongo.replica == 3' --name mongo3 mongo:5.0.1-focal --replSet "rs0" --clusterAuthMode x509 --sslMode requireSSL --sslPEMKeyFile "/srv/mongocerts/user.pem" --sslCAFile "/srv/mongocerts/my.crt"
 
-sudo chown -R root:root $mongodb_root
-sudo chmod -R 0777 $mongodb_root
-
-docker-compose up -d
-#sleep 15s
+docker service create --limit-cpu "6.0" --limit-memory "1g" --dns "10.0.0.196" --reserve-cpu "6.0" --reserve-memory "1512m" --replicas 1 --network host --mount type=volume,source=mongodata1,target=/data/db --mount type=volume,source=mongoconf1,target=/etc/mongod.conf  --mount type=volume,source=mongoconfigdb1,target=/data/configdb --mount type=volume,source=mongocerts1,target=/mongocerts --constraint 'node.labels.mongo.replica == 1' --name mongo1 mongo:5.0.1-focal --replSet "rs0" --clusterAuthMode x509 --sslMode requireSSL --sslPEMKeyFile "/mongocerts/user.pem" --sslCAFile "/mongocerts/my.crt"
+docker service create --limit-cpu "6.0" --limit-memory "1g" --dns "10.0.0.196" --reserve-cpu "6.0" --reserve-memory "1512m" --replicas 1 --network host --mount type=volume,source=mongodata2,target=/data/db --mount type=volume,source=mongoconf2,target=/etc/mongod.conf  --mount type=volume,source=mongoconfigdb2,target=/data/configdb --mount type=volume,source=mongocerts2,target=/mongocerts --constraint 'node.labels.mongo.replica == 2' --name mongo2 mongo:5.0.1-focal --replSet "rs0" --clusterAuthMode x509 --sslMode requireSSL --sslPEMKeyFile "/mongocerts/user.pem" --sslCAFile "/mongocerts/my.crt"
+docker service create --limit-cpu "6.0" --limit-memory "1g" --dns "10.0.0.196" --reserve-cpu "6.0" --reserve-memory "1512m" --replicas 1 --network host --mount type=volume,source=mongodata3,target=/data/db --mount type=volume,source=mongoconf3,target=/etc/mongod.conf  --mount type=volume,source=mongoconfigdb3,target=/data/configdb --mount type=volume,source=mongocerts3,target=/mongocerts --constraint 'node.labels.mongo.replica == 3' --name mongo3 mongo:5.0.1-focal --replSet "rs0" --clusterAuthMode x509 --sslMode requireSSL --sslPEMKeyFile "/mongocerts/user.pem" --sslCAFile "/mongocerts/my.crt"
 
 CID=$(docker ps -qf "name=$cname")
 echo "CID=$CID"
-if [[ ! $CID. == . ]]
-then
-    echo "$cname is running"
-    echo "Restarting $CID"
-    #docker restart $CID
-fi
-#sleep 5s
+

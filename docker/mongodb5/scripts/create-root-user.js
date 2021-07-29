@@ -1,3 +1,4 @@
+/*
 use admin
 db.createUser(
   {
@@ -26,7 +27,9 @@ db.createUser(
     roles: [ { role: "userAdminAnyDatabase", db: "admin" }, "readWriteAnyDatabase", "root" ]
   }
 )
+*/
 
-
+/*
 use admin
 db.changeUserPassword("admin", passwordPrompt())
+*/

@@ -12,7 +12,7 @@ then
     exit
 fi
 
-CNAME="mongodb"
+CNAME="mongo1"
 
 ARRAY=()
 
