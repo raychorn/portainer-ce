@@ -2,7 +2,7 @@ version: '3'
 
 services:
   ssh_box_farsana:
-    image: 10.0.0.173:5000/ubuntu_focal_all_pythons:latest-3.9.6
+    image: ubuntu:focal
     container_name: ssh_box_farsana
     environment:
       - TZ=America/Denver
@@ -23,6 +23,4 @@ services:
         limits:
           cpus: '1.0'
           memory: 256M
-          placement:
-            max_replicas_per_node: 1          
     restart: unless-stopped
