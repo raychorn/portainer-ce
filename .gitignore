@@ -9,3 +9,4 @@ docker/webdav/.env
 docker/pi-hole/etc-pihole/pihole-FTL.db
 docker/mongodb5/mongocerts/*
 .gitignore
+docker/dropbox/.env

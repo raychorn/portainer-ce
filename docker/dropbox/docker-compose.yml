@@ -1,0 +1,22 @@
+version: '3.9'
+
+services:
+  dropbox:
+    image: rbonghi/dropbox:latest
+    container_name: dropbox
+    volumes:
+      - /srv/dropbox:/dropbox
+    environment:
+      - PYTHONUNBUFFERED=1
+      - DROPBOX_TOKEN=${TOKEN}
+    logging:
+        options:
+            max-size: 1g
+    restart: always
+    #command: ["/.dropbox-dist/dropboxd"]
+    deploy:
+        resources:
+            limits:
+                cpus: '1.0'
+                memory: 512M
+    network_mode: 'host'
