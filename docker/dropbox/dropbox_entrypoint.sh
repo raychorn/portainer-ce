@@ -47,15 +47,15 @@ fi
 
 echo "NANO=$NANO"
 
-curl https://packages.expandrive.com/keys/expandrive.asc | gpg --dearmor > packages.expandrive.gpg
-install -o root -g root -m 644 packages.expandrive.gpg /usr/share/keyrings/
-sh -c 'echo "deb [arch=amd64 signed-by=/usr/share/keyrings/packages.expandrive.gpg] https://packages.expandrive.com/expandrive stable main" > /etc/apt/sources.list.d/expandrive.list'
+apt install libc6 libglapi-mesa libxdamage1 libxfixes3 libxcb-glx0 libxcb-dri2-0 libxcb-dri3-0 libxcb-present0 libxcb-sync1 libxshmfence1 libxxf86vm1 -y
 
-apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 0FB0547682F8C86A
+cd ~ && wget -O - "https://www.dropbox.com/download?plat=lnx.x86_64" | tar xzf -
 
-apt-get install apt-transport-https -y
-apt-get update -y
-apt-get install exfs -y
+wget https://www.dropbox.com/download?dl=packages/dropbox.py -O ~/dropbox.py
+
+echo fs.inotify.max_user_watches=100000 | tee -a /etc/sysctl.conf; sysctl -p
+
+~/.dropbox-dist/dropboxd
 
 while true; do
   echo "Sleeping... waiting for dropbox to do its thing and this is normal."

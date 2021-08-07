@@ -5,7 +5,7 @@ services:
     image: ubuntu:focal
     container_name: dropbox
     volumes:
-      - /srv/dropbox:/dropbox
+      - dropbox_volume:/dropbox
       - ./entrypoint.sh:/workspaces/entrypoint.sh
     environment:
       - PYTHONUNBUFFERED=1
@@ -20,3 +20,11 @@ services:
                 cpus: '1.0'
                 memory: 512M
     network_mode: 'host'
+
+volumes:
+  dropbox_volume:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /srv/dropbox
