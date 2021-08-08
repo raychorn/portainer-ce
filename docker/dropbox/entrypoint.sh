@@ -47,15 +47,8 @@ fi
 
 echo "NANO=$NANO"
 
-curl https://packages.expandrive.com/keys/expandrive.asc | gpg --dearmor > packages.expandrive.gpg
-install -o root -g root -m 644 packages.expandrive.gpg /usr/share/keyrings/
-sh -c 'echo "deb [arch=amd64 signed-by=/usr/share/keyrings/packages.expandrive.gpg] https://packages.expandrive.com/expandrive stable main" > /etc/apt/sources.list.d/expandrive.list'
+$PIP3 install --upgrade maestral
 
-apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 0FB0547682F8C86A
-
-apt-get install apt-transport-https -y
-apt-get update -y
-apt-get install exfs -y
 
 while true; do
   echo "Sleeping... waiting for dropbox to do its thing and this is normal."
