@@ -62,6 +62,13 @@ else
     P9000=9000
 fi
 
+if [ -f $BASEDIR/PORT9001.env ]; then
+    echo "Loading environment variables from $BASEDIR/PORT9001.env"
+    export $(cat $BASEDIR/PORT9001.env | sed 's/#.*//g' | xargs)
+else
+    P9001=9001
+fi
+
 P8000=$(findPortInRange 8000 8999 $P8000)
 echo "P8000 -> $P8000"
 echo "P8000=$P8000" > $BASEDIR/PORT8000.env
@@ -71,5 +78,10 @@ P9000=$(findPortInRange 9000 9999 $P9000)
 echo "P9000 -> $P9000"
 echo "P9000=$P9000" > $BASEDIR/PORT9000.env
 export P9000
+
+P9001=$(findPortInRange $P9000 9999 $P9001)
+echo "P9001 -> $P9001"
+echo "P9001=$P9001" > $BASEDIR/PORT9001.env
+export P9001
 
 docker stack deploy -c portainer-agent-stack.yml portainer
