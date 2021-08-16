@@ -10,7 +10,7 @@ services:
           - ./entrypoint.sh:/workspaces/entrypoint.sh
       tty: true
       stdin_open: true
-      command: ["/workspaces/makevenv.sh"]
+      #command: ["/workspaces/makevenv.sh"]
       logging:
           options:
               max-size: 1g
