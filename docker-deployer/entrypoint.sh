@@ -303,7 +303,7 @@ else
 fi
 
 cd $DIR0/$PRODUCT
-./docker-up.sh
+$DIR0/$PRODUCT/docker-up.sh
 
 #################################################
 ###  END!!! Build Environment            ########
