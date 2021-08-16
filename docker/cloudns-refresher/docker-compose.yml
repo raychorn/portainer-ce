@@ -6,12 +6,8 @@ services:
       restart: unless-stopped
       volumes:
           - ./code:/workspaces/python_runner/
-          - ./makevenv.sh:/workspaces/makevenv.sh
           - ./requirements.txt:/workspaces/requirements.txt
-      entrypoint:
-          - /bin/bash
-      ports:
-       - "9999:9000"
+          - ./entrypoint.sh:/workspaces/entrypoint.sh
       tty: true
       stdin_open: true
       command: ["/workspaces/makevenv.sh"]

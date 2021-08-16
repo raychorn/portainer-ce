@@ -318,7 +318,8 @@ else
     sleeping
 fi
 
-$DIR0/$PRODUCT/docker-up.sh
+#$DIR0/$PRODUCT/docker-up.sh
+docker-compose up -d
 
 #################################################
 ###  END!!! Build Environment            ########
