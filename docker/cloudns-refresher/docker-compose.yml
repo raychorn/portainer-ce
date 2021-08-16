@@ -5,9 +5,7 @@ services:
       image: ubuntu:focal
       restart: unless-stopped
       volumes:
-          - ./code:/workspaces/python_runner/
-          - ./requirements.txt:/workspaces/requirements.txt
-          - ./entrypoint.sh:/workspaces/entrypoint.sh
+          - python_runner2_contents:/workspaces
       tty: true
       stdin_open: true
       #command: ["/workspaces/makevenv.sh"]
@@ -19,3 +17,8 @@ services:
               limits:
                   cpus: '1.0'
                   memory: 256M
+
+volumes:
+    python_runner2_contents:
+        external: true
+        name: python_runner2_contents

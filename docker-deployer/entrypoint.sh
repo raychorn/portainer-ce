@@ -318,8 +318,14 @@ else
     sleeping
 fi
 
+VOLUME_NAME=python_runner2_contents
+docker volume create $VOLUME_NAME
+
+VOLUME_DIR=$(docker volume inspect $VOLUME_NAME | jq -r '.[0].Mountpoint')
+ls -l $VOLUME_DIR
+
 #$DIR0/$PRODUCT/docker-up.sh
-docker-compose up -d
+#docker-compose up -d
 
 #################################################
 ###  END!!! Build Environment            ########
