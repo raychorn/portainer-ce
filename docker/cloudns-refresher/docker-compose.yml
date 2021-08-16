@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   python_runner2:
-      image: raychorn/ubuntu_focal_all_pythons:latest-3.9.6
+      image: ubuntu:focal
       restart: unless-stopped
       volumes:
           - ./code:/workspaces/python_runner/
