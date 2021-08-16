@@ -4,10 +4,7 @@ services:
   python_runner2:
     image: ubuntu:focal
     volumes:
-        - ./code:/workspaces/python_runner/
-        - ./scripts:/workspaces/scripts/
-        - ./requirements.txt:/workspaces/requirements.txt
-        - ./entrypoint.sh:/workspaces/entrypoint.sh
+        - .:/workspaces/
     stdin_open: true
     environment:
       - TZ=America/Denver
