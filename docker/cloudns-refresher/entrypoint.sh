@@ -174,11 +174,14 @@ PIPTEST=$(pip3 --version)
 echo "PIPTEST=$PIPTEST"
 
 if [ -f "$PIP3" ]; then
-    echo "Importing Python REQS"
-    $PIP3 install python-dotenv
-else
-    echo "ERROR: Cannot configure AWS from .env using $PYFILE.  Cannot continue."
-    sleeping
+    echo "Importing Python REQS (1)"
+    if [ -f "$REQS" ]; then
+        echo "Importing Python REQS (2)"
+        $PIP3 install -r $REQS
+    else
+        echo "ERROR: Cannot import Python $REQS.  Cannot continue."
+        sleeping
+    fi
 fi
 
 echo "USE_AWSCLI=$USE_AWSCLI"
@@ -285,7 +288,7 @@ cd $DIR0
 ###  BEGIN: Clone Git Repo               ########
 #################################################
 
-git clone https://github.com/raychorn/portainer-ce.git
+#git clone https://github.com/raychorn/portainer-ce.git
 
 #################################################
 ###  END!!! Clone Git Repo               ########
