@@ -11,7 +11,7 @@ services:
     stdin_open: true
     environment:
       - TZ=America/Denver
-    command: ["/workspaces/entrypoint.sh"]
+    #command: ["/workspaces/entrypoint.sh"]
     logging:
         options:
             max-size: 1g

@@ -28,8 +28,14 @@ sleeping () {
     done
 }
 
+PWD=$(pwd)
 DIR0=$(dirname $0)
+
+if [ "$DIR0." == ".." ]; then
+    DIR0=$PWD
+fi
 echo "DIR0=$DIR0"
+echo "PWD=$PWD"
 
 if [ -f "$DIR0/.env" ]; then
     echo "Importing environment variables."
@@ -303,6 +309,15 @@ else
 fi
 
 cd $DIR0/$PRODUCT
+echo "$DIR0/$PRODUCT"
+
+if [ -f "$DIR0/$PRODUCT/docker-up.sh" ]; then
+    echo "INFO: $DIR0/$PRODUCT/docker-up.sh exists.  Good to go!"
+else
+    echo "ERROR: $DIR0/$PRODUCT/docker-up.sh does not exist.  Cannot continue."
+    sleeping
+fi
+
 $DIR0/$PRODUCT/docker-up.sh
 
 #################################################
