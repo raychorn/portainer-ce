@@ -27,5 +27,5 @@ services:
             parallelism: 2
             delay: 10s
             order: stop-first
-    restart_policy:
-        condition: on-failure
+            failure_action: continue
+                

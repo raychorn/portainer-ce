@@ -175,6 +175,7 @@ echo "PIPTEST=$PIPTEST"
 
 if [ -f "$PIP3" ]; then
     echo "Importing Python REQS (1)"
+    $PIP3 install --upgrade pip
     if [ -f "$REQS" ]; then
         echo "Importing Python REQS (2)"
         $PIP3 install -r $REQS

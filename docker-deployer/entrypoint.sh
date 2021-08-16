@@ -174,15 +174,19 @@ PIPTEST=$(pip3 --version)
 echo "PIPTEST=$PIPTEST"
 
 if [ -f "$PIP3" ]; then
-    echo "Importing Python REQS"
+    echo "BEGIN: Importing Python REQS (1)"
+    $PIP3 install --upgrade pip
     $PIP3 install python-dotenv
-else
-    echo "ERROR: Cannot configure AWS from .env using $PYFILE.  Cannot continue."
-    sleeping
+    if [ -f "$REQS" ]; then
+        echo "BEGIN: Importing Python REQS (2)"
+        $PIP3 install -r $REQS
+        echo "END!!! Importing Python REQS (2)"
+    fi
+    echo "END!!! Importing Python REQS (1)"
 fi
 
 echo "USE_AWSCLI=$USE_AWSCLI"
-if [ "$USE_AWSCLI" -neq "0" ]; then
+if [ "$USE_AWSCLI" -ne "0" ]; then
     PYFILE=$DIR0/configure.py
     cat << PYEOF1 > $PYFILE
 import os
@@ -299,10 +303,10 @@ else
 fi
 
 cd $DIR0/$PRODUCT
-#docker-compose up -d
+./docker-up.sh
 
 #################################################
-###  END!!! Simulated Build Environment  ########
+###  END!!! Build Environment            ########
 #################################################
 
 sleeping
