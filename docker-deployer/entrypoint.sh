@@ -16,6 +16,8 @@ apt install iputils-ping -y
 
 apt install curl wget unzip gpg -y
 
+apt-get install jq -y
+
 export DEBIAN_FRONTEND=noninteractive
 export TZ=America/Denver
 
