@@ -2,15 +2,16 @@ version: "3.8"
 
 services:
   python_runner2:
-    image: raychorn/ubuntu_focal_all_pythons:latest-3.9.6
+    image: ubuntu:focal
     volumes:
-        - cloudns_refresher_volume:/workspaces
-    entrypoint:
-        - /bin/bash
-    ports:
-        - "9999:9000"
+        - .:/workspaces/
+        - ./scripts:/workspaces/scripts/
+        - ./requirements.txt:/workspaces/requirements.txt
+        - ./entrypoint.sh:/workspaces/entrypoint.sh
     stdin_open: true
-    command: ["/workspaces/makevenv.sh"]
+    environment:
+      - TZ=America/Denver
+    #command: ["/workspaces/entrypoint.sh"]
     logging:
         options:
             max-size: 1g
@@ -18,7 +19,7 @@ services:
         resources:
             limits:
                 cpus: '1.0'
-                memory: 128M
+                memory: 256M
         replicas: 2
         placement:
             max_replicas_per_node: 1
@@ -26,6 +27,5 @@ services:
             parallelism: 2
             delay: 10s
             order: stop-first
-    restart_policy:
-        condition: on-failure
-        
+            failure_action: continue
+                

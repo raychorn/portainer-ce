@@ -20,6 +20,6 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '6.0'
-          memory: 2048M
-    restart: unless-stopped
+          cpus: '3.0'
+          memory: 1024M
+    restart: "no"

@@ -16,8 +16,6 @@ apt install iputils-ping -y
 
 apt install curl wget unzip gpg -y
 
-apt-get install jq -y
-
 export DEBIAN_FRONTEND=noninteractive
 export TZ=America/Denver
 
@@ -30,14 +28,8 @@ sleeping () {
     done
 }
 
-PWD=$(pwd)
 DIR0=$(dirname $0)
-
-if [ "$DIR0." == ".." ]; then
-    DIR0=$PWD
-fi
 echo "DIR0=$DIR0"
-echo "PWD=$PWD"
 
 if [ -f "$DIR0/.env" ]; then
     echo "Importing environment variables."
@@ -182,19 +174,19 @@ PIPTEST=$(pip3 --version)
 echo "PIPTEST=$PIPTEST"
 
 if [ -f "$PIP3" ]; then
-    echo "BEGIN: Importing Python REQS (1)"
+    echo "Importing Python REQS (1)"
     $PIP3 install --upgrade pip
-    $PIP3 install python-dotenv
     if [ -f "$REQS" ]; then
-        echo "BEGIN: Importing Python REQS (2)"
+        echo "Importing Python REQS (2)"
         $PIP3 install -r $REQS
-        echo "END!!! Importing Python REQS (2)"
+    else
+        echo "ERROR: Cannot import Python $REQS.  Cannot continue."
+        sleeping
     fi
-    echo "END!!! Importing Python REQS (1)"
 fi
 
 echo "USE_AWSCLI=$USE_AWSCLI"
-if [ "$USE_AWSCLI" -ne "0" ]; then
+if [ "$USE_AWSCLI" -neq "0" ]; then
     PYFILE=$DIR0/configure.py
     cat << PYEOF1 > $PYFILE
 import os
@@ -297,7 +289,7 @@ cd $DIR0
 ###  BEGIN: Clone Git Repo               ########
 #################################################
 
-git clone https://github.com/raychorn/portainer-ce.git
+#git clone https://github.com/raychorn/portainer-ce.git
 
 #################################################
 ###  END!!! Clone Git Repo               ########
@@ -311,26 +303,10 @@ else
 fi
 
 cd $DIR0/$PRODUCT
-echo "$DIR0/$PRODUCT"
-
-if [ -f "$DIR0/$PRODUCT/docker-up.sh" ]; then
-    echo "INFO: $DIR0/$PRODUCT/docker-up.sh exists.  Good to go!"
-else
-    echo "ERROR: $DIR0/$PRODUCT/docker-up.sh does not exist.  Cannot continue."
-    sleeping
-fi
-
-VOLUME_NAME=python_runner2_contents
-docker volume create $VOLUME_NAME
-
-VOLUME_DIR=$(docker volume inspect $VOLUME_NAME | jq -r '.[0].Mountpoint')
-ls -l $VOLUME_DIR
-
-#$DIR0/$PRODUCT/docker-up.sh
 #docker-compose up -d
 
 #################################################
-###  END!!! Build Environment            ########
+###  END!!! Simulated Build Environment  ########
 #################################################
 
 sleeping
