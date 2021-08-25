@@ -1,3 +1,33 @@
+
+## server1.web-service.org
+
+```
+_mongodb._tcp.mongodb-cluster1.web-service.org	SRV	
+0 0 65117 127.0.0.1	10m
+```
+
+## tp01-2066.web-service.org
+
+```
+_mongodb._tcp.mongodb-cluster1.web-service.org	SRV	
+0 0 65217 127.0.0.1	10m
+```
+
+## docker1.web-service.org
+
+```
+_mongodb._tcp.mongodb-cluster1.web-service.org	SRV	
+0 0 65317 127.0.0.1	10m
+```
+
+## docker2.web-service.org
+
+```
+_mongodb._tcp.mongodb-cluster1.web-service.org	SRV	
+0 0 65317 127.0.0.1	10m
+```
+
+
 ```
 server1
 
