@@ -7,8 +7,6 @@ services:
     environment:
       - TZ=America/Denver
     volumes:
-      - ./entrypoint.sh:/workspaces/entrypoint.sh
-      - ./.env:/workspaces/.env
       - /var/run/docker.sock:/var/run/docker.sock
       - /var/lib/docker/volumes:/var/lib/docker/volumes
     tty: true
@@ -20,6 +18,6 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '3.0'
-          memory: 1024M
+          cpus: '2.0'
+          memory: 2048M
     restart: "no"

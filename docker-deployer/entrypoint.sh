@@ -3,6 +3,13 @@
 VENV=/workspaces/.venv
 REQS=/workspaces/requirements.txt
 
+VAR_LIB_DOCKER_VOLUMES=/var/lib/docker/volumes
+
+RESOLV_CONF=/workspaces/etc-resolv.conf
+if [ -f $RESOLV_CONF ]; then
+    cp /workspaces/etc-resolv.conf /etc/resolv.conf
+fi
+
 PYTHON39=$(which python3.9)
 PIP3=$(which pip3)
 
@@ -39,6 +46,10 @@ fi
 echo "DIR0=$DIR0"
 echo "PWD=$PWD"
 
+COMPOSE_VERS=compose-1.29.2
+COMPOSE_DIR=$DIR0/$COMPOSE_VERS
+COMPOSE=$COMPOSE_DIR.tar.gz
+
 if [ -f "$DIR0/.env" ]; then
     echo "Importing environment variables."
     export $(cat $DIR0/.env | sed 's/#.*//g' | xargs)
@@ -48,36 +59,28 @@ else
     sleeping
 fi
 
-echo "USE_AWSCLI=$USE_AWSCLI"
-if [ "$USE_AWSCLI" -neq "0" ]; then
+echo "(1) USE_AWSCLI=$USE_AWSCLI"
+if [ "$USE_AWSCLI." != "0." ]; then
     apt install awscli -y
 fi
 
-. /etc/lsb-release
+AWSCLI=$(which aws)
 
 apt install apt-transport-https ca-certificates curl software-properties-common -y
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
-add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $DISTRIB_CODENAME stable"
+ARCH_TEST=$(uname -p)
+ARCH=x86_64
+if [ "$ARCH_TEST" != "x86_64" ]; then
+    ARCH=arm64
+fi
+add-apt-repository "deb [arch=$ARCH] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
 apt update -y
 apt install docker-ce -y
 
-curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-chmod +x /usr/local/bin/docker-compose
-
-DOCKER_COMPOSE_TEST=$(docker-compose --version | grep "docker-compose version")
-echo "Docker Compose Test #1: $DOCKER_COMPOSE_TEST"
-
-if [ -z $DOCKER_COMPOSE_TEST ]; then
-    echo "Docker Compose not installed? Trying to resolve."
-    ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
-fi
-
-DOCKER_COMPOSE_TEST2=$(docker-compose --version | grep "docker-compose version")
-echo "Docker Compose Test #2: $DOCKER_COMPOSE_TEST2"
-
-if [ -z $DOCKER_COMPOSE_TEST2 ]; then
-    echo "Docker Compose not installed. Cannot continue."
-    sleeping
+if [ "$ARCH_TEST" == "x86_64" ]; then
+    DOCKER_COMPOSE_URL=https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)
+    curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    chmod +x /usr/local/bin/docker-compose
 fi
 
 if [ -z "$PYTHON39" ]; then
@@ -91,8 +94,17 @@ fi
 
 if [ -z "$PIP3" ]; then
     echo "Pip 3 is not installed. Installing now..."
-    apt-get install python3-pip -y
+    if [ "$ARCH_TEST" == "x86_64" ]; then
+        $PYTHON39 get-pip.py install
+    else
+        apt-get install python3-pip -y
+    fi
     PIP3=$(which pip3)
+fi
+
+if [ ! -f "$PIP3" ]; then
+    echo "Pip 3 is not installed. Cannot continue..."
+    sleeping
 fi
 
 PYTHON39=$(which python3.9)
@@ -101,49 +113,13 @@ PIP3=$(which pip3)
 echo "PYTHON39=$PYTHON39"
 echo "PIP3=$PIP3"
 
-echo "USE_AWSCLI=$USE_AWSCLI"
-if [ "$USE_AWSCLI" -neq "0" ]; then
-    AWS_CLI_TEST=$(aws --version | grep 'aws-cli/2.2.')
-    echo "AWS_CLI_TEST=$AWS_CLI_TEST"
-
-    if [ -z "$AWS_CLI_TEST" ]; then
-        echo "Cannot find awscli so installing it manually."
-        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "$DIR0/awscliv2.zip"
-
-        if [ -f "$DIR0/awscliv2.zip" ]; then
-            echo "Unzipping awscli."
-            unzip $DIR0/awscliv2.zip -d $DIR0 > /dev/null
-            echo "Done unzipping awscli."
-            if [ -f "$DIR0/aws/install" ]; then
-                echo "awscli can be installed."
-                $DIR0/aws/install
-            else
-                echo "awscli is not installed"
-                sleeping
-            fi
-        fi
-        AWS_CLI_TEST=$(aws --version | grep 'aws-cli/2.2.')
-
-        if [ -z "$AWS_CLI_TEST" ]; then
-            echo "ERROR: AWS CLI is not installed. Please install it and try again."
-            sleeping
-        fi
-    fi
-
-    AWS_CLI_TEST=$(aws --version | grep 'aws-cli/2.2.')
-    echo "AWS_CLI_TEST=$AWS_CLI_TEST"
-
-    if [ -z "$AWS_CLI_TEST" ]; then
-        echo "ERROR: AWS CLI is not installed. Please install it and try again."
-        sleeping
-    fi
-fi
-
 #################################################
 ###  BEGIN: Build Environment            ########
 #################################################
 
-$PIP3 install --upgrade pip
+if [ -f "$PIP3" ]; then
+    $PIP3 install --upgrade pip
+fi
 
 VIRTUALENV=$(which virtualenv)
 
@@ -181,6 +157,8 @@ echo "PIP3=$PIP3"
 PIPTEST=$(pip3 --version)
 echo "PIPTEST=$PIPTEST"
 
+apt-get install python3.9-dev libxml2-dev libxslt-dev -y
+
 if [ -f "$PIP3" ]; then
     echo "BEGIN: Importing Python REQS (1)"
     $PIP3 install --upgrade pip
@@ -193,8 +171,78 @@ if [ -f "$PIP3" ]; then
     echo "END!!! Importing Python REQS (1)"
 fi
 
-echo "USE_AWSCLI=$USE_AWSCLI"
-if [ "$USE_AWSCLI" -ne "0" ]; then
+DOCKER_COMPOSE=$(which docker-compose)
+
+if [ -z "$DOCKER_COMPOSE" ]; then
+    if [ -f "$COMPOSE" ]; then
+        echo "Docker Compose is not installed. Installing now..."
+        tar -xzf $COMPOSE
+        cd $COMPOSE_DIR
+        $PYTHON39 setup.py install
+    else
+        echo "ERROR: Docker Compose was not installed. Cannot continue."
+        sleeping
+    fi
+    DOCKER_COMPOSE=$(which docker-compose)
+fi
+
+DOCKER_COMPOSE_TEST=$($DOCKER_COMPOSE --version | grep "docker-compose version")
+echo "Docker Compose Test #1: $DOCKER_COMPOSE_TEST"
+
+if [ -z "$DOCKER_COMPOSE_TEST" ]; then
+    echo "Docker Compose not installed? Trying to resolve."
+    ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+    DOCKER_COMPOSE=$(which docker-compose)
+fi
+
+DOCKER_COMPOSE_TEST2=$(docker-compose --version | grep "docker-compose version")
+echo "Docker Compose Test #2: $DOCKER_COMPOSE_TEST2"
+
+if [ -z "$DOCKER_COMPOSE_TEST2" ]; then
+    echo "Docker Compose not installed. Cannot continue."
+    sleeping
+fi
+
+echo "(2) USE_AWSCLI=$USE_AWSCLI"
+if [ "$USE_AWSCLI." != "0." ]; then
+    AWS_CLI_TEST=$(aws --version | grep 'aws-cli/2.2.')
+    echo "AWS_CLI_TEST=$AWS_CLI_TEST"
+
+    if [ -z "$AWS_CLI_TEST" ]; then
+        echo "Cannot find awscli so installing it manually."
+        curl "https://awscli.amazonaws.com/awscli-exe-linux-$ARCH.zip" -o "$DIR0/awscliv2.zip"
+
+        if [ -f "$DIR0/awscliv2.zip" ]; then
+            echo "Unzipping awscli."
+            unzip $DIR0/awscliv2.zip -d $DIR0 > /dev/null
+            echo "Done unzipping awscli."
+            if [ -f "$DIR0/aws/install" ]; then
+                echo "awscli can be installed."
+                $DIR0/aws/install
+            else
+                echo "awscli is not installed"
+                sleeping
+            fi
+        fi
+        AWS_CLI_TEST=$(aws --version | grep 'aws-cli/2.2.')
+
+        if [ -z "$AWS_CLI_TEST" ]; then
+            echo "ERROR: AWS CLI is not installed. Please install it and try again."
+            sleeping
+        fi
+    fi
+
+    AWS_CLI_TEST=$(aws --version | grep 'aws-cli/2.2.')
+    echo "AWS_CLI_TEST=$AWS_CLI_TEST"
+
+    if [ -z "$AWS_CLI_TEST" ]; then
+        echo "ERROR: AWS CLI is not installed. Please install it and try again."
+        sleeping
+    fi
+fi
+
+echo "(3) USE_AWSCLI=$USE_AWSCLI"
+if [ "$USE_AWSCLI." != "0." ]; then
     PYFILE=$DIR0/configure.py
     cat << PYEOF1 > $PYFILE
 import os
@@ -282,15 +330,6 @@ PYEOF1
     echo "INFO: AWS CLI is installed and configured. Good to go!"
 fi
 
-DOCKER_TEST=$(docker context ls | grep "command not found")
-
-if [ -z "$DOCKER_TEST" ]; then
-    echo "INFO: Docker is installed and configured. Good to go!"
-else
-    echo "ERROR: Docker is not installed or configured. Cannot continue."
-    sleeping
-fi
-
 cd $DIR0
 
 #################################################
@@ -298,6 +337,8 @@ cd $DIR0
 #################################################
 
 git clone https://github.com/raychorn/portainer-ce.git
+
+PRODUCT=portainer-ce
 
 #################################################
 ###  END!!! Clone Git Repo               ########
@@ -320,12 +361,63 @@ else
     sleeping
 fi
 
-VOLUME_NAME=python_runner2_contents
-docker volume create $VOLUME_NAME
+VOLUME_NAME=etc_pihole
+VOLUME_TEST=$(docker volume ls | grep $VOLUME_NAME)
+echo "(***) VOLUME_TEST:$VOLUME_TEST"
 
-VOLUME_DIR=$(docker volume inspect $VOLUME_NAME | jq -r '.[0].Mountpoint')
-ls -l $VOLUME_DIR
+if [ -z "$VOLUME_TEST" ]; then
+    echo "INFO: $VOLUME_NAME does not exist.  Creating it."
+    docker volume create $VOLUME_NAME
+fi
 
+MOUNTPOINT=$(docker volume inspect $VOLUME_NAME | jq -r '.[0].Mountpoint')
+VOLUME_DIR=$VAR_LIB_DOCKER_VOLUMES/$VOLUME_NAME/_data
+echo "(***) VOLUME_NAME:$VOLUME_NAME, VOLUME_DIR:$VOLUME_DIR"
+
+if [ ! -f "$VOLUME_DIR" ]; then
+    echo "ERROR: $VOLUME_NAME -> $VOLUME_DIR does not exist.  Cannot continue."
+    sleeping
+fi
+
+SOURCE=$DIR0/etc-pihole.tar.gz
+echo "(+++) SOURCE:$SOURCE"
+
+if [ -f "$SOURCE" ]; then
+    echo "INFO: $SOURCE exists.  Good to go!"
+    cd $VOLUME_DIR && tar xvfz $SOURCE --wildcards *
+else
+    echo "ERROR: $SOURCE does not exist.  Cannot continue."
+    sleeping
+fi
+
+VOLUME_NAME=etc_dnsmasq_d
+VOLUME_TEST=$(docker volume ls | grep $VOLUME_NAME)
+
+if [ -z "$VOLUME_TEST" ]; then
+    echo "INFO: $VOLUME_NAME does not exist.  Creating it."
+    docker volume create $VOLUME_NAME
+fi
+
+MOUNTPOINT=$(docker volume inspect $VOLUME_NAME | jq -r '.[0].Mountpoint')
+VOLUME_DIR=$VAR_LIB_DOCKER_VOLUMES/$VOLUME_NAME/_data
+echo "(***) VOLUME_NAME:$VOLUME_NAME, VOLUME_DIR:$VOLUME_DIR"
+
+if [ ! -f "$VOLUME_DIR" ]; then
+    echo "ERROR: $VOLUME_NAME -> $VOLUME_DIR does not exist.  Cannot continue."
+    sleeping
+fi
+
+SOURCE=$DIR0/etc-dnsmasq_d.tar.gz
+echo "(+++) SOURCE:$SOURCE"
+
+if [ -f "$SOURCE" ]; then
+    echo "INFO: $SOURCE exists.  Good to go!"
+    cd $VOLUME_DIR && tar xvfz $SOURCE --wildcards *
+else
+    echo "ERROR: $SOURCE does not exist.  Cannot continue."
+    sleeping
+fi
+exit
 #$DIR0/$PRODUCT/docker-up.sh
 #docker-compose up -d
 
