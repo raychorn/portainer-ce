@@ -374,7 +374,7 @@ MOUNTPOINT=$(docker volume inspect $VOLUME_NAME | jq -r '.[0].Mountpoint')
 VOLUME_DIR=$VAR_LIB_DOCKER_VOLUMES/$VOLUME_NAME/_data
 echo "(***) VOLUME_NAME:$VOLUME_NAME, VOLUME_DIR:$VOLUME_DIR"
 
-if [ ! -f "$VOLUME_DIR" ]; then
+if [ ! -d "$VOLUME_DIR" ]; then
     echo "ERROR: $VOLUME_NAME -> $VOLUME_DIR does not exist.  Cannot continue."
     sleeping
 fi
@@ -402,7 +402,7 @@ MOUNTPOINT=$(docker volume inspect $VOLUME_NAME | jq -r '.[0].Mountpoint')
 VOLUME_DIR=$VAR_LIB_DOCKER_VOLUMES/$VOLUME_NAME/_data
 echo "(***) VOLUME_NAME:$VOLUME_NAME, VOLUME_DIR:$VOLUME_DIR"
 
-if [ ! -f "$VOLUME_DIR" ]; then
+if [ ! -d "$VOLUME_DIR" ]; then
     echo "ERROR: $VOLUME_NAME -> $VOLUME_DIR does not exist.  Cannot continue."
     sleeping
 fi
