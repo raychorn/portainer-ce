@@ -1,8 +1,8 @@
 version: '3'
 
 services:
-  mongodb_cluster_docker1:
-    image: ubuntu:focal
+  mongodb_cluster_server1:
+    image: mongo:5.0.0
     environment:
       - TZ=America/Denver
       - MONGO_INITDB_ROOT_USERNAME=root
@@ -21,7 +21,7 @@ services:
       - mongoscripts:/scripts
     tty: true
     stdin_open: true
-    command: ["/scripts/entrypoint.sh"]
+    command: ["-f", "/etc/mongod.conf"]
     logging:
         options:
             max-size: 1g
@@ -29,13 +29,12 @@ services:
       resources:
         limits:
           cpus: '2.0'
-          memory: 2048M
+          memory: 1024M
         reservations:
           cpus: '1.0'
           memory: 512M          
       placement:
-        constraints:
-          - node.hostname == docker1
+        constraints: [node.hostname == server1]
 
 volumes:
   mongocerts:
