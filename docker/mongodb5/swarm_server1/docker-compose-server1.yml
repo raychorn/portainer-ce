@@ -1,0 +1,52 @@
+version: '3'
+
+services:
+  mongodb_cluster_docker1:
+    image: ubuntu:focal
+    environment:
+      - TZ=America/Denver
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=sisko@7660$boo
+    ports:
+      - 27017:27017
+      - 27018:27018
+      - 27019:27019
+    network_mode: host
+    volumes:
+      - mongocerts:/mongocerts
+      - mongodata:/data/db
+      - mongoconf:/mongoconf
+      - mongoconfigdb:/data/configdb
+      - mongologs:/var/log/mongodb
+      - mongoscripts:/scripts
+    tty: true
+    stdin_open: true
+    command: ["/scripts/entrypoint.sh"]
+    logging:
+        options:
+            max-size: 1g
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2048M
+        reservations:
+          cpus: '1.0'
+          memory: 512M          
+      placement:
+        constraints:
+          - node.hostname == docker1
+
+volumes:
+  mongocerts:
+    external: true
+  mongodata:
+    external: true
+  mongoconf:
+    external: true
+  mongoconfigdb:  
+    external: true
+  mongologs:
+    external: true
+  mongoscripts:
+    external: true
