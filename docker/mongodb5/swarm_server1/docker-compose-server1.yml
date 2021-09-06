@@ -1,17 +1,15 @@
-version: '3'
+version: '3.9'
 
 services:
   mongodb_cluster_server1:
-    image: mongo:5.0.0
+    image: ubuntu:focal
+    container_name: mongodb_cluster_server1
     environment:
       - TZ=America/Denver
       - MONGO_INITDB_ROOT_USERNAME=root
       - MONGO_INITDB_ROOT_PASSWORD=sisko@7660$boo
     ports:
       - 27017:27017
-      - 27018:27018
-      - 27019:27019
-    network_mode: host
     volumes:
       - mongocerts:/mongocerts
       - mongodata:/data/db
@@ -21,17 +19,17 @@ services:
       - mongoscripts:/scripts
     tty: true
     stdin_open: true
-    command: ["-f", "/etc/mongod.conf"]
+    #command: ["-f", "/etc/mongod.conf"]
     logging:
         options:
             max-size: 1g
     deploy:
       resources:
         limits:
-          cpus: '2.0'
-          memory: 1024M
+          cpus: '4.0'
+          memory: 2048M
         reservations:
-          cpus: '1.0'
+          cpus: '2.0'
           memory: 512M          
       placement:
         constraints: [node.hostname == server1]

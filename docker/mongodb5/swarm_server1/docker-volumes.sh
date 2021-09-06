@@ -30,6 +30,7 @@ if [ ! -d "$VOLUME_DIR" ]; then
 fi
 
 sudo cp -r $VOLUME_SRC/* $VOLUME_DIR
+sudo chmod 600 $VOLUME_DIR/*
 echo "END!!! VOLUME_NAME:$VOLUME_NAME"
 
 echo ""
@@ -132,7 +133,7 @@ if [ ! -d "$VOLUME_DIR" ]; then
     exit 1
 fi
 
-sudo tar -zxf $VOLUME_SRC --directory $VOLUME_DIR
+#sudo tar -zxf $VOLUME_SRC --directory $VOLUME_DIR
 echo "END!!! VOLUME_NAME:$VOLUME_NAME"
 
 echo ""
@@ -186,6 +187,9 @@ if [ ! -d "$VOLUME_DIR" ]; then
 fi
 
 echo "END!!! VOLUME_NAME:$VOLUME_NAME"
+
+
+docker volume create --name=mongoconfigdb
 
 echo ""
 echo "------------------------------------------------------------------------"

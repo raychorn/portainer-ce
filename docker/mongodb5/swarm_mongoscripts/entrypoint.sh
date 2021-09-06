@@ -56,4 +56,4 @@ fi
 chmod 0600 $KEYFILE
 
 echo "Starting MongoDB ($MONGOD)..."
-$MONGOD --bind_ip_all --auth --config /etc/mongod.conf --keyFile /mongocerts/keyfile.txt --replSet rs0
+nohup $MONGOD --bind_ip_all --auth --config /etc/mongod.conf --keyFile /mongocerts/keyfile.txt --replSet rs0 > /var/log/mongodb0.log 2>&1 &
