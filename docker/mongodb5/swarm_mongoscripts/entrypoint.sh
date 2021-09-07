@@ -57,21 +57,91 @@ chmod 0600 $KEYFILE
 
 RUNLOG=/var/log/mongodb/mongod-daemon.log
 
+$MONGOD --bind_ip_all --auth --config /etc/mongod.conf --keyFile /mongocerts/keyfile.txt --replSet rs0 --logpath $RUNLOG --dbpath /data/db --fork
+
+INITD=/etc/init.d/mongod
+cat << INITDEOF > $INITD
+#!/bin/bash
+#
+# mongodb     Startup script for the mongodb server
+#
+# chkconfig: - 64 36
+# description: MongoDB Database Server
+#
+# processname: mongodb
+#
+
+# Source function library
+. /etc/rc.d/init.d/functions
+
+if [ -f /etc/sysconfig/mongodb ]; then
+	. /etc/sysconfig/mongodb
+fi
+
+prog="mongod"
+mongod="/usr/bin/mongod"
+RETVAL=0
+
+start() {
+	echo -n $"Starting $prog: "
+	daemon $mongod "--bind_ip_all --auth --config /etc/mongod.conf --keyFile /mongocerts/keyfile.txt --replSet rs0 --logpath /var/log/mongodb/mongod-daemon.log --dbpath /data/db --fork --logappend 2>&1 >>/var/log/mongodb.log"
+	RETVAL=$?
+	echo
+	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/$prog
+	return $RETVAL
+}
+
+stop() {
+	echo -n $"Stopping $prog: "
+	killproc $prog
+	RETVAL=$?
+	echo
+	[ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/$prog
+	return $RETVAL
+}
+
+reload() {
+	echo -n $"Reloading $prog: "
+	killproc $prog -HUP
+	RETVAL=$?
+	echo
+	return $RETVAL
+}
+
+case "$1" in
+	start)
+		start
+		;;
+	stop)
+		stop
+		;;
+	restart)
+		stop
+		start
+		;;
+	condrestart)
+		if [ -f /var/lock/subsys/$prog ]; then
+			stop
+			start
+		fi
+		;;
+	reload)
+		reload
+		;;
+	status)
+		status $mongod
+		RETVAL=$?
+		;;
+	*)
+		echo $"Usage: $0 {start|stop|restart|condrestart|reload|status}"
+		RETVAL=1
+esac
+
+exit $RETVAL
+INITDEOF
+
 while true; do
     echo "Sleeping..." >> $RUNLOG
-    sleep 15
-
-    MONGO_TEST=$(ps -aux | grep mongod)
-
-    if [ -z "$MONGO_TEST" ]; then
-        echo "Starting MongoDB ($MONGOD)..." >> $RUNLOG
-        nohup $MONGOD --bind_ip_all --auth --config /etc/mongod.conf --keyFile /mongocerts/keyfile.txt --replSet rs0 >> $RUNLOG 2>&1 &
-
-        echo "Sleeping while the database settles." >> $RUNLOG
-        sleep 15
-
-        echo "re.initiate()" >> $RUNLOG
-        mongo --eval "rs.initiate({_id: 'rs0', members: [{_id: 0, host: '127.0.0.1:27017'}]});"
-    fi
+    sleep 9999
 done
 
