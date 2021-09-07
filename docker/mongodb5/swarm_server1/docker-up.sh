@@ -74,12 +74,12 @@ while true; do
         echo "MongoDB is not running yet..."
     else
         echo "MongoDB is running..."
-        MONGO=$(docker exec -it $CID $(which mongo))
+        MONGO=$(docker exec -it $CID /bin/bash -c "which mongo")
         if [ -z "$MONGO" ]; then
             echo "MongoDB is not running yet..."
             exit 1
         fi
-        docker exec -it $CID $MONGO --eval "rs.initiate({_id: 'rs0', members: [{_id: 0, host: 'server1.web-service.org:27017'},{_id: 0, host: 'tp01-2066.web-service.org:27017'}]});"
+        #docker exec -it $CID $MONGO --eval "rs.initiate({_id: 'rs0', members: [{_id: 0, host: 'server1.web-service.org:27017'},{_id: 0, host: 'tp01-2066.web-service.org:27017'}]});"
         break
     fi
     sleep 15

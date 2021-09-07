@@ -35,6 +35,10 @@ services:
           memory: 512M          
       placement:
         constraints: [node.hostname == server1]  # , node.hostname == tp01-2066
+      restart_policy:
+        condition: any
+        delay: 5s
+        window: 120s
 
 volumes:
   mongocerts:
