@@ -55,5 +55,23 @@ fi
 
 chmod 0600 $KEYFILE
 
-echo "Starting MongoDB ($MONGOD)..."
-nohup $MONGOD --bind_ip_all --auth --config /etc/mongod.conf --keyFile /mongocerts/keyfile.txt --replSet rs0 > /var/log/mongodb0.log 2>&1 &
+RUNLOG=/var/log/mongodb/mongod-daemon.log
+
+while true; do
+    echo "Sleeping..." >> $RUNLOG
+    sleep 15
+
+    MONGO_TEST=$(ps -aux | grep mongod)
+
+    if [ -z "$MONGO_TEST" ]; then
+        echo "Starting MongoDB ($MONGOD)..." >> $RUNLOG
+        nohup $MONGOD --bind_ip_all --auth --config /etc/mongod.conf --keyFile /mongocerts/keyfile.txt --replSet rs0 >> $RUNLOG 2>&1 &
+
+        echo "Sleeping while the database settles." >> $RUNLOG
+        sleep 15
+
+        echo "re.initiate()" >> $RUNLOG
+        mongo --eval "rs.initiate({_id: 'rs0', members: [{_id: 0, host: '127.0.0.1:27017'}]});"
+    fi
+done
+

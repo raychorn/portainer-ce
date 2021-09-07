@@ -26,9 +26,48 @@ fi
 echo "ENTRYPOINT:$ENTRYPOINT --> $CID:/entrypoint.sh"
 docker cp $ENTRYPOINT $CID:/entrypoint.sh
 
-docker exec -it $CID /bin/bash -c "chmod +x /entrypoint.sh && /entrypoint.sh"
+echo "BEGIN: /data/db"
+docker exec -it $CID /bin/bash -c "ls -la /data/db"
+echo "END!!! /data/db"
 
-echo "Sleeping while the database settles."
-sleep 30s
+docker exec -it -d $CID /bin/bash -c "chmod +x /entrypoint.sh && /entrypoint.sh"
 
-docker exec -it $CID mongo --eval "rs.initiate({_id: 'rs0', members: [{_id: 0, host: 'server1.web-service.org:27017'}]});"
+VAR_LIB_DOCKER_VOLUMES=/var/lib/docker/volumes
+
+VOLUME_NAME=mongologs
+VOLUME_TEST=$(docker volume ls | grep $VOLUME_NAME)
+if [ -z "$VOLUME_TEST" ]; then
+    echo "Cannot find volume $VOLUME_NAME so cannot continue."
+    exit 1
+fi
+
+MOUNTPOINT=$(docker volume inspect $VOLUME_NAME | jq -r '.[0].Mountpoint')
+VOLUME_DIR=$VAR_LIB_DOCKER_VOLUMES/$VOLUME_NAME/_data
+
+if [ ! -d "$VOLUME_DIR" ]; then
+    echo "Cannot find VOLUME_DIR:$VOLUME_DIR so cannot continue."
+    exit 1
+fi
+
+#docker run --privileged -v /run/systemd/system:/run/systemd/system -v /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket -it $CID systemctl
+
+COUNT=0
+RUNLOG=$VOLUME_DIR/mongod-daemon.log
+while true; do
+    COUNT=$((COUNT+1))
+    echo "($COUNT) BEGIN: $RUNLOG"
+    if [ -f "$RUNLOG" ]; then
+        ls -la $RUNLOG
+        tail -n 10 $RUNLOG
+    fi
+    echo "($COUNT) END!!! $VOLUME_DIR"
+    TEST=$(docker exec -it $CID /bin/bash -c "ps -aux | grep mongod")
+    if [ -z "$TEST" ]; then
+        echo "MongoDB is not running yet..."
+    fi
+    sleep 10
+    if [ $COUNT -gt 10 ]; then
+        echo "COUNT:$COUNT"
+        break
+    fi
+done

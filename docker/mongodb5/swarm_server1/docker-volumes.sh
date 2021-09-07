@@ -115,7 +115,8 @@ fi
 
 VOLUME_TEST=$(docker volume ls | grep $VOLUME_NAME)
 if [ -z "$VOLUME_TEST" ]; then
-    docker volume create --name $VOLUME_NAME --opt type=none --opt device=$TARGET_DIR --opt o=bind
+    #docker volume create --name $VOLUME_NAME --opt type=none --opt device=$TARGET_DIR --opt o=bind
+    docker volume create --driver local --opt type=none --opt device=$TARGET_DIR --opt o=bind $VOLUME_NAME
 fi
 
 MOUNTPOINT=$(docker volume inspect $VOLUME_NAME | jq -r '.[0].Mountpoint')

@@ -17,6 +17,8 @@ services:
       - mongoconfigdb:/data/configdb
       - mongologs:/var/log/mongodb
       - mongoscripts:/scripts
+      - /run/systemd/system:/run/systemd/system
+      - /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket
     tty: true
     stdin_open: true
     #command: ["-f", "/etc/mongod.conf"]
