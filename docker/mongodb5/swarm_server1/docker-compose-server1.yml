@@ -1,9 +1,9 @@
 version: '3.9'
 
 services:
-  mongodb_cluster_server1:
+  mongodb_cluster1:
     image: ubuntu:focal
-    container_name: mongodb_cluster_server1
+    container_name: mongodb_cluster1
     environment:
       - TZ=America/Denver
       - MONGO_INITDB_ROOT_USERNAME=root
@@ -34,7 +34,7 @@ services:
           cpus: '2.0'
           memory: 512M          
       placement:
-        constraints: [node.hostname == server1]
+        constraints: [node.hostname == server1]  # , node.hostname == tp01-2066
 
 volumes:
   mongocerts:

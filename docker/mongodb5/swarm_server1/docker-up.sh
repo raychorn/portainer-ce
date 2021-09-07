@@ -4,12 +4,21 @@ docker-compose -f docker-compose-server1.yml up -d
 
 #docker stack deploy -c docker-compose-server1.yml mongodb5
 
-CID=$(docker ps -q -f name=mongodb_cluster_server1)
-
-if [ -z "$CID" ]; then
-    echo "No container found."
-    exit 1
-fi
+COUNT=0
+while true; do
+    COUNT=$((COUNT+1))
+    CID=$(docker ps -q -f name=mongodb_cluster1)
+    echo "($COUNT) CID:$CID"
+    if [ ! -z "$CID" ]; then
+        echo "Found CID:$CID"
+        break
+    fi
+    sleep 15
+    if [ $COUNT -gt 20 ]; then
+        echo "Failed --> COUNT:$COUNT"
+        exit
+    fi
+done
 
 ENTRYPOINT=/home/raychorn/__projects/portainer-ce/docker/mongodb5/swarm_mongoscripts/entrypoint.sh
 
@@ -65,7 +74,12 @@ while true; do
         echo "MongoDB is not running yet..."
     else
         echo "MongoDB is running..."
-        docker exec -it $CID mongo --eval "rs.initiate({_id: 'rs0', members: [{_id: 0, host: '127.0.0.1:27017'}]});"
+        MONGO=$(docker exec -it $CID $(which mongo))
+        if [ -z "$MONGO" ]; then
+            echo "MongoDB is not running yet..."
+            exit 1
+        fi
+        docker exec -it $CID $MONGO --eval "rs.initiate({_id: 'rs0', members: [{_id: 0, host: 'server1.web-service.org:27017'},{_id: 0, host: 'tp01-2066.web-service.org:27017'}]});"
         break
     fi
     sleep 15
@@ -74,16 +88,3 @@ while true; do
         break
     fi
 done
-
-#    MONGO_TEST=$(ps -aux | grep mongod)
-#
-#    if [ -z "$MONGO_TEST" ]; then
-#        echo "Starting MongoDB ($MONGOD)..." >> $RUNLOG
-#        nohup $MONGOD --bind_ip_all --auth --config /etc/mongod.conf --keyFile /mongocerts/keyfile.txt --replSet rs0 >> $RUNLOG 2>&1 &
-#
-#        echo "Sleeping while the database settles." >> $RUNLOG
-#        sleep 15
-#
-#        echo "re.initiate()" >> $RUNLOG
-#        mongo --eval "rs.initiate({_id: 'rs0', members: [{_id: 0, host: '127.0.0.1:27017'}]});"
-#    fi
