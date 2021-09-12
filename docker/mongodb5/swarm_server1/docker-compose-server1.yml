@@ -2,7 +2,8 @@ version: '3.9'
 
 services:
   mongodb_cluster1:
-    image: ubuntu:focal
+    #image: ubuntu:focal
+    image: 10.0.0.164:5000/mongodb5_cluster:5.0.2b
     container_name: mongodb_cluster1
     environment:
       - TZ=America/Denver
@@ -17,15 +18,16 @@ services:
       - mongoconfigdb:/data/configdb
       - mongologs:/var/log/mongodb
       - mongoscripts:/scripts
-      - /run/systemd/system:/run/systemd/system
-      - /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket
+      #- /run/systemd/system:/run/systemd/system
+      #- /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket
     tty: true
     stdin_open: true
-    #command: ["-f", "/etc/mongod.conf"]
+    command: ["/entrypoint.sh"]
     logging:
         options:
             max-size: 1g
     deploy:
+      mode: global
       resources:
         limits:
           cpus: '4.0'
@@ -33,10 +35,12 @@ services:
         reservations:
           cpus: '2.0'
           memory: 512M          
-      placement:
-        constraints: [node.hostname == server1]  # , node.hostname == tp01-2066
+      #placement:
+      #  constraints: 
+      #    - node.hostname == server1
+      #    - node.hostname == tp01-2066
       restart_policy:
-        condition: any
+        condition: on-failure
         delay: 5s
         window: 120s
 

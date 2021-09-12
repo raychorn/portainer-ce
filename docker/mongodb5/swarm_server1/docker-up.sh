@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-docker-compose -f docker-compose-server1.yml up -d
+#docker-compose -f docker-compose-server1.yml up -d
 
-#docker stack deploy -c docker-compose-server1.yml mongodb5
+docker stack deploy -c docker-compose-server1.yml mongodb_cluster1
 
 COUNT=0
 while true; do
