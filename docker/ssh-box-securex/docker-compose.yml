@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  ssh_box_farsana:
+    image: ubuntu:focal
+    container_name: ssh_box_farsana
+    environment:
+      - TZ=America/Denver
+    volumes:
+      - ./workspaces:/workspaces
+      #- ./workspaces/etc-ssh:/workspaces/etc-ssh
+      #- ./workspaces/etc-ssh/authorized_keys:/root/.ssh/authorized_keys
+    ports:
+      - 2222:2222
+    tty: true
+    stdin_open: true
+    #command: ["/workspaces/entrypoint.sh"]
+    logging:
+        options:
+            max-size: 1g
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 256M
+    restart: unless-stopped
