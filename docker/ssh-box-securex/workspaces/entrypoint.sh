@@ -51,8 +51,13 @@ ETC_SSH=/workspaces/etc-ssh
 
 if [[ -d $ETC_SSH ]]
 then
-    echo "."
-    cp /workspaces/etc-ssh/sshd_config /etc/ssh/sshd_config
+    echo "Setting up $ETC_SSH/sshd_config -> /etc/ssh/sshd_config"
+    if [[ -f $ETC_SSH/sshd_config ]]; then
+        cp $ETC_SSH/sshd_config /etc/ssh/sshd_config
+    else
+        echo "No sshd_config found in $ETC_SSH"
+        exit 1
+    fi
 else
     mkdir $ETC_SSH
 fi
@@ -61,12 +66,14 @@ fi
 #echo "cp -R /etc/ssh $ETC_SSH"
 #cp -R /etc/ssh $ETC_SSH
 
-PUB_KEY=/root/.ssh/authorized_keys
-PUB_KEY_HOME=$(dirname $PUB_KEY)
+PUB_KEY=$ETC_SSH/authorized_keys
+mkdir -p /root/.ssh
+PUB_KEY_HOME=/root/.ssh/authorized_keys
 
 if [[ -f $PUB_KEY ]]
 then
     echo "Found $PUB_KEY and $PUB_KEY_HOME."
+    cp $PUB_KEY $PUB_KEY_HOME
     chmod -R 600 $PUB_KEY_HOME
     ls -la $PUB_KEY_HOME
 else
@@ -78,6 +85,6 @@ service ssh restart
 
 while true; do
   echo "Sleeping... waiting for a user to login."
-  sleep 9999
+  sleep 999999
 done
 

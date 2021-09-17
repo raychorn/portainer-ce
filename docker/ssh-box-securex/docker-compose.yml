@@ -1,9 +1,9 @@
 version: '3'
 
 services:
-  ssh_box_farsana:
+  ssh_box_securex:
     image: ubuntu:focal
-    container_name: ssh_box_farsana
+    container_name: ssh_box_securex
     environment:
       - TZ=America/Denver
     volumes:
@@ -14,7 +14,7 @@ services:
       - 2222:2222
     tty: true
     stdin_open: true
-    #command: ["/workspaces/entrypoint.sh"]
+    command: ["/workspaces/entrypoint.sh"]
     logging:
         options:
             max-size: 1g
