@@ -1,0 +1,59 @@
+version: '3.9'
+
+services:
+  mongodb_cluster1:
+    image: ubuntu:focal
+    #image: 10.0.0.164:5000/mongodb5_cluster:5.0.2b
+    container_name: mongodb_cluster1
+    environment:
+      - TZ=America/Denver
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=sisko@7660$boo
+    ports:
+      - 27017:27017
+    volumes:
+      - mongocerts:/mongocerts
+      - mongodata:/data/db
+      - mongoconf:/mongoconf
+      - mongoconfigdb:/data/configdb
+      - mongologs:/var/log/mongodb
+      - mongoscripts:/scripts
+      #- /run/systemd/system:/run/systemd/system
+      #- /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket
+    tty: true
+    stdin_open: true
+    #command: ["/entrypoint.sh"]
+    logging:
+        options:
+            max-size: 1g
+    deploy:
+      mode: global
+      resources:
+        limits:
+          cpus: '4.0'
+          memory: 2048M
+        reservations:
+          cpus: '2.0'
+          memory: 512M          
+      placement:
+        constraints: 
+          - node.hostname == server1
+          - node.hostname == tp01-2066
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        window: 120s
+
+volumes:
+  mongocerts:
+    external: true
+  mongodata:
+    external: true
+  mongoconf:
+    external: true
+  mongoconfigdb:  
+    external: true
+  mongologs:
+    external: true
+  mongoscripts:
+    external: true
