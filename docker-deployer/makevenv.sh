@@ -35,16 +35,27 @@ then
     echo "7. Found $python39"
 else
     echo "8. Installing python3.9"
-    apt update -y
-    apt install software-properties-common -y
-    echo -ne '\n' | add-apt-repository ppa:deadsnakes/ppa
-    apt install python3.9 -y
-	apt install python3.9-distutils -y
+    if [ -f "/etc/arch-release" ]; then
+        echo "Running arch linux so checking for Python 3.9"
+    else
+        echo "Assuming Ubuntu because not running arch linux."
+        apt update -y
+        apt install software-properties-common -y
+        echo -ne '\n' | add-apt-repository ppa:deadsnakes/ppa
+        apt install python3.9 -y
+        apt install python3.9-distutils -y
+    fi
 fi
 
 python39=$(which python3.9)
 pip3=$(which pip3)
 setuptools="0"
+
+if [[ ! -f $python39 ]]
+then
+    echo "8.1 Cannot find python39:$python39 so cannot continue."
+    exit 1
+fi
 
 if [[ -f $python39 ]]
 then

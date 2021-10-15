@@ -7,15 +7,22 @@ import fast_json as json
 
 import socket
 
-dotenv.load_dotenv(dotenv.find_dotenv())
-assert os.environ.get('DOCKERHOST'), 'DOCKERHOST is not set.'
+import traceback
+import binascii
+
+fpath = dotenv.find_dotenv()
+print('Loading .env from "{}".'.format(fpath))
+dotenv.load_dotenv(fpath)
+
+dockerhost = os.environ.get('DOCKERHOST')
+assert dockerhost, 'DOCKERHOST is not set.'
 
 libs = os.environ.get('libs')
 if (libs):
     sys.path.insert(0, libs)
 
 __host__ = socket.gethostname()
-__is_prod__ = __host__ in ['DESKTOP-9J3LL5Q', 'server1']
+__is_prod__ = __host__ in ['pop-os', 'server1']
 
 from vyperlogix.misc import _utils
 from vyperlogix.decorators import tunnel
@@ -71,8 +78,13 @@ if (__name__ == "__main__"):
     has_context = False
     resp = os_command('docker context ls')
     if (len(resp[-1]) >= 2):
-        has_context = str(resp[-1][1]).find(host) > -1
+        has_context = str(resp[-1][1].decode('ascii')).find(host) > -1
 
+    print('*** remote: {}'.format(remote))
+    print('*** ssh_username: {}'.format(ssh_username))
+    print('*** ssh_pkey: {}'.format(ssh_pkey))
+    print('*** remote_bind_address: {}'.format(remote_bind_address))
+    print('*** local_bind_address: {}'.format(local_bind_address))
     @tunnel.ssh_tunnel(remote=remote, ssh_username=ssh_username, ssh_pkey=ssh_pkey, remote_bind_address=remote_bind_address, local_bind_address=local_bind_address)
     def do_the_thing(**kwargs):
         #_utils.os_command('netstat -tunlp', message='(***)', verbose=True)
@@ -81,23 +93,48 @@ if (__name__ == "__main__"):
         resp = os_command('docker context ls')
         if (not has_context):
             print('Creating context for {}'.format(host))
-            resp = os_command('docker context create {} --docker "host={}"'.format(os.environ.get('DOCKERCONTEXT'), host))
-            has_worked = any([str(s).lower().find('successfully created') > -1 for s in resp[-1]])
+            cmd = 'docker context create {} --docker "host={}"'.format(os.environ.get('DOCKERCONTEXT'), host)
+            print(cmd)
+            resp = os_command(cmd)
+            has_worked = any([str(s.decode('ascii')).lower().find('successfully created') > -1 for s in resp[-1]])
             if (has_worked):
                 print('Successfully created context for {}'.format(host))
+            else:
+                print('Failed to create context for {} because: {}.'.format(host, resp[-1][0].decode('ascii')))
         if (has_worked):
             resp = os_command('docker context use {}'.format(os.environ.get('DOCKERCONTEXT')))
-            print(str(resp[-1][-1]))
+            print(str(resp[-1][-1].decode('ascii')))
             #################################################################
             # BEGIN: do stuff with the context
             #################################################################
-            resp = os_command('docker ps')
-            print('\n'.join([str(s) for s in resp[-1]]))
+            if (len(sys.argv) > 1):
+                try:
+                    commands = eval(sys.argv[1:][0])
+                    commands = commands if (isinstance(commands, list)) else [commands]
+                    commands = [' '.join(commands) if (len(commands) > 1) else commands]
+                    print('DEBUG: commands -> {}'.format(commands))
+                    def __decode__(ch):
+                        try:
+                            return ch.decode('utf-8')
+                        except:
+                            return ch.decode('ascii')
+                    for cmd in commands:
+                        print('='*40)
+                        print('DEBUG: cmd -> {}'.format(cmd))
+                        resp = os_command(cmd)
+                        print('\n'.join([str(__decode__(s)) for s in resp[-1]]))
+                        print('='*40)
+                        print()
+                except Exception as ex:
+                    traceback.print_exc(file=sys.stdout)
+            elif (0):
+                resp = os_command('docker ps')
+                print('\n'.join([str(s.decode('ascii')) for s in resp[-1]]))
             #################################################################
             # END!!! do stuff with the context
             #################################################################
             resp = os_command('docker context use default')
-            print(str(resp[-1][-1]))
+            print(str(resp[-1][-1].decode('ascii')))
             resp = os_command('docker context rm {}'.format(os.environ.get('DOCKERCONTEXT')))
         print('DONE.')
 
