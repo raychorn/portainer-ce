@@ -3,6 +3,8 @@ import sys
 import docker
 import dotenv
 
+import subprocess
+
 import fast_json as json
 
 import socket
@@ -10,9 +12,42 @@ import socket
 import traceback
 import binascii
 
-fpath = dotenv.find_dotenv()
-print('Loading .env from "{}".'.format(fpath))
-dotenv.load_dotenv(fpath)
+root = '/'
+roots = ['/mnt/', '/srv/', '/home/', '/media/']
+if (any([__file__.startswith(f) for f in roots])):
+    base_root = [f for f in roots if __file__.startswith(f)][0]
+    resp = subprocess.check_output('mount | grep {}'.format(base_root).split(), shell=True)
+    is_found = False
+    for line in resp.decode().split('\n'):
+        if (line.find(base_root) > -1):
+            base_root = [tok for tok in line.split() if (tok.find(base_root) > -1)][0]
+            base_root = os.sep.join([base_root, os.sep.join(__file__.split(base_root)[-1].split(os.sep)[1:2])])
+            is_found = True
+            break
+    if (not is_found):
+        base_root = os.sep.join(__file__.split(os.sep)[0:2])
+        is_found = True
+else:
+    raise Exception('1: Could not find base root for {}'.format(__file__))
+
+assert is_found, "2: Could not find base root for {}".format(__file__)
+
+is_found = False
+for dirname,dirs,files in os.walk(base_root, topdown=True):
+    if (not __file__.startswith(dirname)):
+        continue
+    for file in files:
+        if (file == '.env'):
+            fpath = os.path.join(dirname, file)
+            fp = os.sep.join(fpath.split(os.sep)[0:-1])
+            if (not __file__.startswith(fp)):
+                continue
+            assert os.path.exists(fpath) and os.path.isfile(fpath), "Could not find .env file at {}".format(fpath)
+            dotenv.load_dotenv(os.path.join(dirname, file))
+            is_found = True
+            break
+
+assert is_found, "3: Could not find base root for {}".format(__file__)
 
 dockerhost = os.environ.get('DOCKERHOST')
 assert dockerhost, 'DOCKERHOST is not set.'

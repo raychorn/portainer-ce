@@ -1,27 +1,21 @@
 version: '3.3'
 
 services:
-  uptime-kuma:
-    image: louislam/uptime-kuma
-    container_name: uptime-kuma
+  docker-deployer:
+    image: tower.web-service.org:5000/ubuntu-focal-minimal:latest
+    container_name: docker-deployer
     volumes:
-      - uptime-kuma:/app/data
-    ports:
-      - 3001:3001
+      - ./workspaces:/workspaces
     tty: true
     stdin_open: true
-    #command: ["/workspaces/entrypoint.sh"]
+    command: ["/bin/bash"]
+    #entrypoint: /workspaces/entrypoint.sh
     logging:
         options:
             max-size: 1g
     deploy:
       resources:
         limits:
-          cpus: '0.5'
-          memory: 256M
+          cpus: '4.0'
+          memory: 2048M
     restart: unless-stopped
-
-volumes:
-    uptime-kuma:
-        external: true
-        name: uptime-kuma

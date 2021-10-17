@@ -1,0 +1,27 @@
+version: '3.3'
+
+services:
+  uptime-kuma:
+    image: louislam/uptime-kuma
+    container_name: uptime-kuma
+    volumes:
+      - uptime-kuma:/app/data
+    ports:
+      - 3001:3001
+    tty: true
+    stdin_open: true
+    #command: ["/workspaces/entrypoint.sh"]
+    logging:
+        options:
+            max-size: 1g
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+    restart: unless-stopped
+
+volumes:
+    uptime-kuma:
+        external: true
+        name: uptime-kuma
