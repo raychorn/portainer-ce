@@ -41,6 +41,7 @@ apt install iputils-ping -y
 apt-get nano -y
 
 ETC_SSH=/workspaces/etc-ssh
+ETC_SUDOERS=/workspaces/etc-sudoers
 
 if [[ -d $ETC_SSH ]]
 then
@@ -163,6 +164,24 @@ fi
 
 if [ ! -d "/home/$USERNAME/.ssh" ]; then
     chown -R $USERNAME:$USERNAME /home/$USERNAME/.ssh
+fi
+
+if [ ! -f "$ETC_SUDOERS" ]; then
+    echo "Missing $ETC_SUDOERS. Cannot proceed."
+    exit 1
+fi
+
+if [ ! -f "/etc/sudoers" ]; then
+    echo "Missing /etc/sudoers. Cannot proceed."
+    exit 1
+fi
+
+SUDOERS_TARGET=/etc/sudoers/users-permissions
+cp $ETC_SUDOERS $SUDOERS_TARGET
+
+if [ ! -f "$SUDOERS_TARGET" ]; then
+    echo "Missing $SUDOERS_TARGET. Cannot proceed."
+    exit 1
 fi
 
 echo "SLEEP:$SLEEP"
