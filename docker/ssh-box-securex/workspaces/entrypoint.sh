@@ -2,8 +2,14 @@
 
 SLEEP=false
 
-VENV=/workspaces/.venv
-REQS=/workspaces/requirements.txt
+ROOTDIR=/workspaces/portainer-ce-1.0.0/docker/ssh-box-securex
+
+if [ ! -d "$ROOTDIR" ]; then
+    ROOTDIR=/workspaces
+fi
+
+VENV=$ROOTDIR/.venv
+REQS=$ROOTDIR/requirements.txt
 
 PYTHON39=$(which python3.9)
 PIP3=$(which pip3)
@@ -40,8 +46,8 @@ apt-get install net-tools -y
 apt install iputils-ping -y
 apt-get nano -y
 
-ETC_SSH=/workspaces/etc-ssh
-ETC_SUDOERS=/workspaces/etc-sudoers
+ETC_SSH=$ROOTDIR/etc-ssh
+ETC_SUDOERS=$ROOTDIR/etc-sudoers
 
 if [[ -d $ETC_SSH ]]
 then
@@ -55,10 +61,6 @@ then
 else
     mkdir $ETC_SSH
 fi
-
-# bootstrap to get the config files.
-#echo "cp -R /etc/ssh $ETC_SSH"
-#cp -R /etc/ssh $ETC_SSH
 
 service ssh restart
 
@@ -88,6 +90,7 @@ if [ ! -d "/home/$USERNAME/.ssh" ]; then
     chown -R $USERNAME:$USERNAME /home/$USERNAME/.ssh
 fi
 
+
 USERNAME=radia
 if [ ! -d "/home/$USERNAME" ]; then
     adduser --disabled-password --gecos GECOS --shell /bin/bash --home /home/$USERNAME $USERNAME
@@ -114,6 +117,7 @@ if [ ! -d "/home/$USERNAME/.ssh" ]; then
     chown -R $USERNAME:$USERNAME /home/$USERNAME/.ssh
 fi
 
+
 USERNAME=ramani
 if [ ! -d "/home/$USERNAME" ]; then
     adduser --disabled-password --gecos GECOS --shell /bin/bash --home /home/$USERNAME $USERNAME
@@ -139,6 +143,7 @@ fi
 if [ ! -d "/home/$USERNAME/.ssh" ]; then
     chown -R $USERNAME:$USERNAME /home/$USERNAME/.ssh
 fi
+
 
 USERNAME=rajesh
 if [ ! -d "/home/$USERNAME" ]; then
