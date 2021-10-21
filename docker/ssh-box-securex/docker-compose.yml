@@ -7,20 +7,18 @@ services:
     environment:
       - TZ=America/Denver
     volumes:
-      - ./workspaces:/workspaces
-      #- ./workspaces/etc-ssh:/workspaces/etc-ssh
-      #- ./workspaces/etc-ssh/authorized_keys:/root/.ssh/authorized_keys
+      - /mnt/FourTB/__projects_server1/portainer-ce/docker/ssh-box-securex/workspaces:/workspaces
     ports:
       - 2222:2222
     tty: true
     stdin_open: true
-    command: ["/workspaces/entrypoint.sh"]
+    #command: ["ls -la"] # /workspaces/entrypoint.sh
     logging:
         options:
             max-size: 1g
     deploy:
       resources:
         limits:
-          cpus: '1.0'
-          memory: 256M
+          cpus: '4.0'
+          memory: 1256M
     restart: unless-stopped

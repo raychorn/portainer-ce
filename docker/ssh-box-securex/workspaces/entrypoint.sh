@@ -1,5 +1,7 @@
 #!/bin/bash
 
+SLEEP=false
+
 VENV=/workspaces/.venv
 REQS=/workspaces/requirements.txt
 
@@ -36,16 +38,7 @@ apt-get update -y
 echo "2" | apt-get install openssh-server -y
 apt-get install net-tools -y
 apt install iputils-ping -y
-
-NANO=$(which nano)
-
-if [ -z "$NANO" ]; then
-    echo "NANO is not installed. Installing now..."
-    apt-get nano -y
-    NANO=$(which nano)
-fi
-
-echo "NANO=$NANO"
+apt-get nano -y
 
 ETC_SSH=/workspaces/etc-ssh
 
@@ -66,25 +59,121 @@ fi
 #echo "cp -R /etc/ssh $ETC_SSH"
 #cp -R /etc/ssh $ETC_SSH
 
-PUB_KEY=$ETC_SSH/authorized_keys
-mkdir -p /root/.ssh
-PUB_KEY_HOME=/root/.ssh/authorized_keys
-
-if [[ -f $PUB_KEY ]]
-then
-    echo "Found $PUB_KEY and $PUB_KEY_HOME."
-    cp $PUB_KEY $PUB_KEY_HOME
-    chmod -R 600 $PUB_KEY_HOME
-    ls -la $PUB_KEY_HOME
-else
-    echo "Missing $PUB_KEY. Cannot proceed."
-    exit 1
-fi
-
 service ssh restart
 
-while true; do
-  echo "Sleeping... waiting for a user to login."
-  sleep 999999
-done
+USERNAME=raychorn
+if [ ! -d "/home/$USERNAME" ]; then
+    adduser --disabled-password --gecos GECOS --shell /bin/bash --home /home/$USERNAME $USERNAME
+    echo -e "peekab00\npeekab00" | (passwd $USERNAME)
+fi
+
+if [ ! -d "/home/$USERNAME/.ssh" ]; then
+    mkdir -p /home/$USERNAME/.ssh
+    chmod 700 /home/$USERNAME/.ssh
+fi
+
+if [ ! -f "/home/$USERNAME/.ssh/authorized_keys" ]; then
+    PUB_KEY=$ETC_SSH/authorized_keys_$USERNAME
+    if [ -f "$PUB_KEY" ]; then
+        cp $PUB_KEY /home/$USERNAME/.ssh/authorized_keys
+        chmod 600 /home/$USERNAME/.ssh/authorized_keys
+    else
+        echo "Missing $PUB_KEY. Cannot proceed."
+        exit 1
+    fi
+fi
+
+if [ ! -d "/home/$USERNAME/.ssh" ]; then
+    chown -R $USERNAME:$USERNAME /home/$USERNAME/.ssh
+fi
+
+USERNAME=radia
+if [ ! -d "/home/$USERNAME" ]; then
+    adduser --disabled-password --gecos GECOS --shell /bin/bash --home /home/$USERNAME $USERNAME
+    echo -e "0rang3Z3bra\n0rang3Z3bra" | (passwd $USERNAME)
+fi
+
+if [ ! -d "/home/$USERNAME/.ssh" ]; then
+    mkdir -p /home/$USERNAME/.ssh
+    chmod 700 /home/$USERNAME/.ssh
+fi
+
+if [ ! -f "/home/$USERNAME/.ssh/authorized_keys" ]; then
+    PUB_KEY=$ETC_SSH/authorized_keys_$USERNAME
+    if [ -f "$PUB_KEY" ]; then
+        cp $PUB_KEY /home/$USERNAME/.ssh/authorized_keys
+        chmod 600 /home/$USERNAME/.ssh/authorized_keys
+    else
+        echo "Missing $PUB_KEY. Cannot proceed."
+        exit 1
+    fi
+fi
+
+if [ ! -d "/home/$USERNAME/.ssh" ]; then
+    chown -R $USERNAME:$USERNAME /home/$USERNAME/.ssh
+fi
+
+USERNAME=ramani
+if [ ! -d "/home/$USERNAME" ]; then
+    adduser --disabled-password --gecos GECOS --shell /bin/bash --home /home/$USERNAME $USERNAME
+    echo -e "0rang3Z3bra\n0rang3Z3bra" | (passwd $USERNAME)
+fi
+
+if [ ! -d "/home/$USERNAME/.ssh" ]; then
+    mkdir -p /home/$USERNAME/.ssh
+    chmod 700 /home/$USERNAME/.ssh
+fi
+
+if [ ! -f "/home/$USERNAME/.ssh/authorized_keys" ]; then
+    PUB_KEY=$ETC_SSH/authorized_keys_$USERNAME
+    if [ -f "$PUB_KEY" ]; then
+        cp $PUB_KEY /home/$USERNAME/.ssh/authorized_keys
+        chmod 600 /home/$USERNAME/.ssh/authorized_keys
+    else
+        echo "Missing $PUB_KEY. Cannot proceed."
+        exit 1
+    fi
+fi
+
+if [ ! -d "/home/$USERNAME/.ssh" ]; then
+    chown -R $USERNAME:$USERNAME /home/$USERNAME/.ssh
+fi
+
+USERNAME=rajesh
+if [ ! -d "/home/$USERNAME" ]; then
+    adduser --disabled-password --gecos GECOS --shell /bin/bash --home /home/$USERNAME $USERNAME
+    echo -e "0rang3Z3bra\n0rang3Z3bra" | (passwd $USERNAME)
+fi
+
+if [ ! -d "/home/$USERNAME/.ssh" ]; then
+    mkdir -p /home/$USERNAME/.ssh
+    chmod 700 /home/$USERNAME/.ssh
+fi
+
+if [ ! -f "/home/$USERNAME/.ssh/authorized_keys" ]; then
+    PUB_KEY=$ETC_SSH/authorized_keys_$USERNAME
+    if [ -f "$PUB_KEY" ]; then
+        cp $PUB_KEY /home/$USERNAME/.ssh/authorized_keys
+        chmod 600 /home/$USERNAME/.ssh/authorized_keys
+    else
+        echo "Missing $PUB_KEY. Cannot proceed."
+        exit 1
+    fi
+fi
+
+if [ ! -d "/home/$USERNAME/.ssh" ]; then
+    chown -R $USERNAME:$USERNAME /home/$USERNAME/.ssh
+fi
+
+echo "SLEEP:$SLEEP"
+if [[ "$SLEEP." == "." ]]
+then
+    while true; do
+    echo "Sleeping... waiting for a user to login."
+    sleep 999999
+    done
+else
+    echo "DONE."
+fi
+
 
