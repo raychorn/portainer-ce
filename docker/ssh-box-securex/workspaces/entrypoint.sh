@@ -14,6 +14,13 @@ REQS=$ROOTDIR/requirements.txt
 PYTHON39=$(which python3.9)
 PIP3=$(which pip3)
 
+sleeping () {
+    while true; do
+        echo "Sleeping... this is what this is supposed to do but this keesp the container running forever and it is doing wakeonlan's."
+        sleep 999999999
+    done
+}
+
 apt-get update -y && apt-get upgrade -y
 
 export DEBIAN_FRONTEND=noninteractive
@@ -52,13 +59,13 @@ ETC_SUDOERS=$ROOTDIR/etc-sudoers
 if [[ ! -d $ETC_SSH ]]
 then
     echo "Cannot find ETC_SSH:$ETC_SSH so cannot continue."
-    exit 1
+    sleeping
 fi
 
 if [[ ! -f $ETC_SUDOERS ]]
 then
     echo "Cannot find ETC_SUDOERS:$ETC_SUDOERS so cannot continue."
-    exit 1
+    sleeping
 fi
 
 if [[ -d $ETC_SSH ]]
@@ -68,7 +75,7 @@ then
         cp $ETC_SSH/sshd_config /etc/ssh/sshd_config
     else
         echo "No sshd_config found in $ETC_SSH"
-        exit 1
+        sleeping
     fi
 fi
 
@@ -93,7 +100,7 @@ if [ ! -f "/home/$USERNAME/.ssh/authorized_keys" ]; then
         chmod 600 /home/$USERNAME/.ssh/authorized_keys
     else
         echo "Missing $PUB_KEY. Cannot proceed."
-        exit 1
+        sleeping
     fi
 fi
 
@@ -120,7 +127,7 @@ if [ ! -f "/home/$USERNAME/.ssh/authorized_keys" ]; then
         chmod 600 /home/$USERNAME/.ssh/authorized_keys
     else
         echo "Missing $PUB_KEY. Cannot proceed."
-        exit 1
+        sleeping
     fi
 fi
 
@@ -147,7 +154,7 @@ if [ ! -f "/home/$USERNAME/.ssh/authorized_keys" ]; then
         chmod 600 /home/$USERNAME/.ssh/authorized_keys
     else
         echo "Missing $PUB_KEY. Cannot proceed."
-        exit 1
+        sleeping
     fi
 fi
 
@@ -174,7 +181,7 @@ if [ ! -f "/home/$USERNAME/.ssh/authorized_keys" ]; then
         chmod 600 /home/$USERNAME/.ssh/authorized_keys
     else
         echo "Missing $PUB_KEY. Cannot proceed."
-        exit 1
+        sleeping
     fi
 fi
 
@@ -184,31 +191,20 @@ fi
 
 if [ ! -f "$ETC_SUDOERS" ]; then
     echo "Missing $ETC_SUDOERS. Cannot proceed."
-    exit 1
+    sleeping
 fi
 
-if [ ! -f "/etc/sudoers" ]; then
-    echo "Missing /etc/sudoers. Cannot proceed."
-    exit 1
+if [ -f "/etc/sudoers" ]; then
+    SUDOERS_TARGET=/etc/sudoers/users-permissions
+    cp $ETC_SUDOERS $SUDOERS_TARGET
+
+    if [ ! -f "$SUDOERS_TARGET" ]; then
+        echo "Missing $SUDOERS_TARGET. Cannot proceed."
+        sleeping
+    fi
 fi
 
-SUDOERS_TARGET=/etc/sudoers/users-permissions
-cp $ETC_SUDOERS $SUDOERS_TARGET
-
-if [ ! -f "$SUDOERS_TARGET" ]; then
-    echo "Missing $SUDOERS_TARGET. Cannot proceed."
-    exit 1
-fi
-
-echo "SLEEP:$SLEEP"
-if [[ "$SLEEP." == "." ]]
-then
-    while true; do
-    echo "Sleeping... waiting for a user to login."
-    sleep 999999
-    done
-else
-    echo "DONE."
-fi
+echo "Done."
+sleeping
 
 
