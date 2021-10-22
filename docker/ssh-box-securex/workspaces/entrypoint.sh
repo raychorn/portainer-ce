@@ -6,6 +6,8 @@ ROOTDIR=/workspaces/portainer-ce-1.0.0/docker/ssh-box-securex
 
 if [ ! -d "$ROOTDIR" ]; then
     ROOTDIR=/workspaces
+else
+    ROOTDIR=$ROOTDIR/workspaces
 fi
 
 VENV=$ROOTDIR/.venv
