@@ -55,7 +55,7 @@ then
     exit 1
 fi
 
-if [[ ! -d $ETC_SUDOERS ]]
+if [[ ! -f $ETC_SUDOERS ]]
 then
     echo "Cannot find ETC_SUDOERS:$ETC_SUDOERS so cannot continue."
     exit 1
