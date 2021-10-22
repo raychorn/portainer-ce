@@ -2,15 +2,8 @@
 
 SLEEP=false
 
-ROOTDIR=/workspaces/portainer-ce-1.0.0/docker/ssh-box-securex
+ROOTDIR=$(dirname "$0")
 echo "1. ROOTDIR:$ROOTDIR"
-
-if [ ! -d "$ROOTDIR" ]; then
-    ROOTDIR=/workspaces
-else
-    ROOTDIR=$ROOTDIR/workspaces
-fi
-echo "2. ROOTDIR:$ROOTDIR"
 
 VENV=$ROOTDIR/.venv
 REQS=$ROOTDIR/requirements.txt
