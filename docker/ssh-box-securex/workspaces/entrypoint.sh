@@ -3,12 +3,14 @@
 SLEEP=false
 
 ROOTDIR=/workspaces/portainer-ce-1.0.0/docker/ssh-box-securex
+echo "1. ROOTDIR:$ROOTDIR"
 
 if [ ! -d "$ROOTDIR" ]; then
     ROOTDIR=/workspaces
 else
     ROOTDIR=$ROOTDIR/workspaces
 fi
+echo "2. ROOTDIR:$ROOTDIR"
 
 VENV=$ROOTDIR/.venv
 REQS=$ROOTDIR/requirements.txt
@@ -46,10 +48,22 @@ apt-get update -y
 echo "2" | apt-get install openssh-server -y
 apt-get install net-tools -y
 apt install iputils-ping -y
-apt-get nano -y
+apt-get install nano -y
 
 ETC_SSH=$ROOTDIR/etc-ssh
 ETC_SUDOERS=$ROOTDIR/etc-sudoers
+
+if [[ ! -d $ETC_SSH ]]
+then
+    echo "Cannot find ETC_SSH:$ETC_SSH so cannot continue."
+    exit 1
+fi
+
+if [[ ! -d $ETC_SUDOERS ]]
+then
+    echo "Cannot find ETC_SUDOERS:$ETC_SUDOERS so cannot continue."
+    exit 1
+fi
 
 if [[ -d $ETC_SSH ]]
 then
@@ -60,8 +74,6 @@ then
         echo "No sshd_config found in $ETC_SSH"
         exit 1
     fi
-else
-    mkdir $ETC_SSH
 fi
 
 service ssh restart
@@ -77,8 +89,9 @@ if [ ! -d "/home/$USERNAME/.ssh" ]; then
     chmod 700 /home/$USERNAME/.ssh
 fi
 
+PUB_KEY=$ETC_SSH/authorized_keys_$USERNAME
+echo "PUB_KEY:$PUB_KEY"
 if [ ! -f "/home/$USERNAME/.ssh/authorized_keys" ]; then
-    PUB_KEY=$ETC_SSH/authorized_keys_$USERNAME
     if [ -f "$PUB_KEY" ]; then
         cp $PUB_KEY /home/$USERNAME/.ssh/authorized_keys
         chmod 600 /home/$USERNAME/.ssh/authorized_keys
