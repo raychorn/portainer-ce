@@ -3,6 +3,9 @@
 SLEEP=false
 
 ROOTDIR=$(dirname "$0")
+if [ "$ROOTDIR" = "." ]; then
+    ROOTDIR=$(pwd)
+fi
 echo "1. ROOTDIR:$ROOTDIR"
 
 VENV=$ROOTDIR/.venv
