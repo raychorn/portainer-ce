@@ -108,85 +108,14 @@ if [ ! -d "/home/$USERNAME/.ssh" ]; then
     chown -R $USERNAME:$USERNAME /home/$USERNAME/.ssh
 fi
 
+MAKE_USERS=$ROOTDIR/make-users.sh
 
-USERNAME=radia
-if [ ! -d "/home/$USERNAME" ]; then
-    adduser --disabled-password --gecos GECOS --shell /bin/bash --home /home/$USERNAME $USERNAME
-    echo -e "0rang3Z3bra\n0rang3Z3bra" | (passwd $USERNAME)
-fi
-
-if [ ! -d "/home/$USERNAME/.ssh" ]; then
-    mkdir -p /home/$USERNAME/.ssh
-    chmod 700 /home/$USERNAME/.ssh
-fi
-
-if [ ! -f "/home/$USERNAME/.ssh/authorized_keys" ]; then
-    PUB_KEY=$ETC_SSH/authorized_keys_$USERNAME
-    if [ -f "$PUB_KEY" ]; then
-        cp $PUB_KEY /home/$USERNAME/.ssh/authorized_keys
-        chmod 600 /home/$USERNAME/.ssh/authorized_keys
-    else
-        echo "Missing $PUB_KEY. Cannot proceed."
-        sleeping
-    fi
-fi
-
-if [ ! -d "/home/$USERNAME/.ssh" ]; then
-    chown -R $USERNAME:$USERNAME /home/$USERNAME/.ssh
-fi
-
-
-USERNAME=ramani
-if [ ! -d "/home/$USERNAME" ]; then
-    adduser --disabled-password --gecos GECOS --shell /bin/bash --home /home/$USERNAME $USERNAME
-    echo -e "0rang3Z3bra\n0rang3Z3bra" | (passwd $USERNAME)
-fi
-
-if [ ! -d "/home/$USERNAME/.ssh" ]; then
-    mkdir -p /home/$USERNAME/.ssh
-    chmod 700 /home/$USERNAME/.ssh
-fi
-
-if [ ! -f "/home/$USERNAME/.ssh/authorized_keys" ]; then
-    PUB_KEY=$ETC_SSH/authorized_keys_$USERNAME
-    if [ -f "$PUB_KEY" ]; then
-        cp $PUB_KEY /home/$USERNAME/.ssh/authorized_keys
-        chmod 600 /home/$USERNAME/.ssh/authorized_keys
-    else
-        echo "Missing $PUB_KEY. Cannot proceed."
-        sleeping
-    fi
-fi
-
-if [ ! -d "/home/$USERNAME/.ssh" ]; then
-    chown -R $USERNAME:$USERNAME /home/$USERNAME/.ssh
-fi
-
-
-USERNAME=rajesh
-if [ ! -d "/home/$USERNAME" ]; then
-    adduser --disabled-password --gecos GECOS --shell /bin/bash --home /home/$USERNAME $USERNAME
-    echo -e "0rang3Z3bra\n0rang3Z3bra" | (passwd $USERNAME)
-fi
-
-if [ ! -d "/home/$USERNAME/.ssh" ]; then
-    mkdir -p /home/$USERNAME/.ssh
-    chmod 700 /home/$USERNAME/.ssh
-fi
-
-if [ ! -f "/home/$USERNAME/.ssh/authorized_keys" ]; then
-    PUB_KEY=$ETC_SSH/authorized_keys_$USERNAME
-    if [ -f "$PUB_KEY" ]; then
-        cp $PUB_KEY /home/$USERNAME/.ssh/authorized_keys
-        chmod 600 /home/$USERNAME/.ssh/authorized_keys
-    else
-        echo "Missing $PUB_KEY. Cannot proceed."
-        sleeping
-    fi
-fi
-
-if [ ! -d "/home/$USERNAME/.ssh" ]; then
-    chown -R $USERNAME:$USERNAME /home/$USERNAME/.ssh
+if [ -f "$MAKE_USERS" ]; then
+    echo "Found $MAKE_USERS so will run it."
+    chmod +x $MAKE_USERS
+    $MAKE_USERS
+else
+    echo "Cannot find $MAKE_USERS so will not run it."
 fi
 
 if [ ! -f "$ETC_SUDOERS" ]; then
