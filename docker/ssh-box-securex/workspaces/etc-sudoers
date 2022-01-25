@@ -1,5 +1,0 @@
-##Allow users to run any command (enabled for patching from oracle platnum support)
-ramani ALL=ALL, !/bin/su
-rajesh ALL=ALL, !/bin/su
-radia ALL=ALL, !/bin/su
-raychorn ALL=(ALL) NOPASSWD:ALL
